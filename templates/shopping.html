@@ -2,5 +2,28 @@
 
 {% block content %}
 <h1>📋 Покупки</h1>
-<p class="subtitle">Список покупок. Скоро тут будет логика.</p>
+<p class="subtitle">Твои списки покупок</p>
+
+<form method="POST" action="/shopping/create" class="add-form">
+    <input type="text" name="name" placeholder="Название списка (Пятёрочка)" required>
+    <button type="submit" class="btn-primary">Создать</button>
+</form>
+
+<div class="lists">
+    {% for lst in lists %}
+    <div class="list-card">
+        <a href="/shopping/{{ lst.id }}" class="list-link">
+            <div class="list-name">{{ lst.name }}</div>
+            <div class="list-count">
+                {{ lst.items | selectattr('done', 'equalto', false) | list | length }} активных
+            </div>
+        </a>
+        <form method="POST" action="/shopping/{{ lst.id }}/delete" class="delete-form">
+            <button type="submit" class="btn-delete" onclick="return confirm('Удалить список?')">✕</button>
+        </form>
+    </div>
+    {% else %}
+    <p class="empty">Пока нет списков. Создай первый!</p>
+    {% endfor %}
+</div>
 {% endblock %}
