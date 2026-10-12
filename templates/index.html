@@ -1,0 +1,29 @@
+<{% extends "base.html" %}
+
+{% block content %}
+<h1>Привет, Вова!</h1>
+<p class="subtitle">Это твой домашний хаб. Пока тут пусто, но скоро будет.</p>
+
+<div class="cards">
+    <a href="/shopping" class="card">
+        <div class="card-icon">📋</div>
+        <div class="card-title">Покупки</div>
+        <div class="card-desc">Список покупок</div>
+    </a>
+    <a href="/wishes" class="card">
+        <div class="card-icon">🎁</div>
+        <div class="card-title">Желания</div>
+        <div class="card-desc">Что хотим</div>
+    </a>
+    <a href="/calendar" class="card">
+        <div class="card-icon">📅</div>
+        <div class="card-title">Календарь</div>
+        <div class="card-desc">События и даты</div>
+    </a>
+    <a href="/recipes" class="card">
+        <div class="card-icon">🍳</div>
+        <div class="card-title">Рецепты</div>
+        <div class="card-desc">Свои рецепты</div>
+    </a>
+</div>
+{% endblock %}

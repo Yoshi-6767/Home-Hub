@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="layout">
+        <header class="header">
+            <div class="logo">Home Hub</div>
+            <div class="user">Вова ▼</div>
+        </header>
+
+        <aside class="sidebar">
+            <nav>
+                <a href="/" class="nav-item">🏠 Главная</a>
+                <a href="/shopping" class="nav-item">📋 Покупки</a>
+                <a href="/wishes" class="nav-item">🎁 Желания</a>
+                <a href="/calendar" class="nav-item">📅 Календарь</a>
+                <a href="/recipes" class="nav-item">🍳 Рецепты</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

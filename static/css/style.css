@@ -1,0 +1,123 @@
+:root {
+    --accent: #FF6B00;
+    --bg: #F5F5F5;
+    --card-bg: #FFFFFF;
+    --text: #1A1A1A;
+    --text-muted: #666666;
+    --border: #E0E0E0;
+    --radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 64px 1fr;
+    grid-template-areas:
+        "header header"
+        "sidebar content";
+    min-height: 100vh;
+}
+
+.header {
+    grid-area: header;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--accent);
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border);
+    padding: 16px;
+}
+
+.nav-item {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.nav-item:hover {
+    background: var(--bg);
+    color: var(--accent);
+}
+
+.content {
+    grid-area: content;
+    padding: 32px;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.1);
+}
+
+.card-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.card-desc {
+    color: var(--text-muted);
+    font-size: 13px;
+}
