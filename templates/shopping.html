@@ -15,7 +15,7 @@
         <a href="/shopping/{{ lst.id }}" class="list-link">
             <div class="list-name">{{ lst.name }}</div>
             <div class="list-count">
-                {{ lst.items | selectattr('done', 'equalto', false) | list | length }} активных
+                {{ lst.items | rejectattr('done') | list | length }} активных
             </div>
         </a>
         <form method="POST" action="/shopping/{{ lst.id }}/delete" class="delete-form">
