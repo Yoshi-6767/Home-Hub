@@ -6,7 +6,8 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-SHOPPING_FILE = 'shopping.json'
+DATA_DIR = '/data'
+SHOPPING_FILE = os.path.join(DATA_DIR, 'shopping.json')
 
 
 def load_shopping():
