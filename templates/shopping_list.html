@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/shopping" class="back-link">← Назад к спискам</a>
+<h1>{{ lst.name }}</h1>
+
+<form method="POST" action="/shopping/{{ lst.id }}/add" class="add-form">
+    <input type="text" name="name" placeholder="Что купить" required>
+    <input type="text" name="quantity" placeholder="Кол-во (1 л)" class="input-small">
+    <button type="submit" class="btn-primary">Добавить</button>
+</form>
+
+<div class="items">
+    {% for item in lst.items if not item.done %}
+    <div class="item">
+        <form method="POST" action="/shopping/{{ lst.id }}/toggle/{{ item.id }}" class="toggle-form">
+            <button type="submit" class="checkbox"></button>
+        </form>
+        <div class="item-name">{{ item.name }}</div>
+        {% if item.quantity %}<div class="item-qty">{{ item.quantity }}</div>{% endif %}
+        <form method="POST" action="/shopping/{{ lst.id }}/delete/{{ item.id }}" class="delete-form">
+            <button type="submit" class="btn-delete">✕</button>
+        </form>
+    </div>
+    {% endfor %}
+
+    {% set done_items = lst.items | selectattr('done') | list %}
+    {% if done_items %}
+    <div class="done-block">
+        <div class="done-title">Куплено ({{ done_items | length }})</div>
+        {% for item in done_items %}
+        <div class="item item-done">
+            <form method="POST" action="/shopping/{{ lst.id }}/toggle/{{ item.id }}" class="toggle-form">
+                <button type="submit" class="checkbox checked">✓</button>
+            </form>
+            <div class="item-name">{{ item.name }}</div>
+            {% if item.quantity %}<div class="item-qty">{{ item.quantity }}</div>{% endif %}
+            <form method="POST" action="/shopping/{{ lst.id }}/delete/{{ item.id }}" class="delete-form">
+                <button type="submit" class="btn-delete">✕</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
