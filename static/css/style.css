@@ -121,3 +121,177 @@ h1 {
     color: var(--text-muted);
     font-size: 13px;
 }
+
+/* Формы */
+.add-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.add-form input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.add-form input:focus {
+    border-color: var(--accent);
+}
+
+.input-small {
+    max-width: 120px;
+}
+
+.btn-primary {
+    padding: 12px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+/* Списки */
+.lists {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.list-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.list-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.1);
+}
+
+.list-link {
+    text-decoration: none;
+    color: var(--text);
+    flex: 1;
+}
+
+.list-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.list-count {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.btn-delete:hover {
+    background: #FFE5E5;
+    color: #E53935;
+}
+
+/* Пункты списка */
+.items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+}
+
+.checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.checkbox.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-size: 12px;
+}
+
+.item-name {
+    flex: 1;
+    font-size: 14px;
+}
+
+.item-qty {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.item-done .item-name {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.done-block {
+    margin-top: 24px;
+}
+
+.done-title {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.back-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.back-link:hover {
+    color: var(--accent);
+}
+
+.empty {
+    color: var(--text-muted);
+    font-size: 14px;
+}
