@@ -2,5 +2,79 @@
 
 {% block content %}
 <h1>🎁 Желания</h1>
-<p class="subtitle">Список желаний. Скоро тут будет логика.</p>
+
+<div class="wishes-total">
+    <div class="total-label">Сумма невыполненных</div>
+    <div class="total-value">{{ "%.0f"|format(total) }} ₽</div>
+</div>
+
+<form method="POST" action="/wishes/add" class="add-form wishes-form">
+    <input type="text" name="name" placeholder="Что хочу" required>
+    <input type="text" name="link" placeholder="Ссылка (необязательно)">
+    <input type="number" name="price" placeholder="Цена" class="input-small" step="1">
+    <select name="priority" class="input-small">
+        <option value="normal">Обычное</option>
+        <option value="urgent">🔴 Срочно</option>
+        <option value="dream">🟡 Мечта</option>
+        <option value="gift">🟢 Подарок</option>
+    </select>
+    <button type="submit" class="btn-primary">Добавить</button>
+</form>
+
+<div class="wishes-list">
+    {% for w in wishes if not w.done %}
+    <div class="wish priority-{{ w.priority }}">
+        <div class="wish-priority">
+            {% if w.priority == 'urgent' %}🔴
+            {% elif w.priority == 'dream' %}🟡
+            {% elif w.priority == 'gift' %}🟢
+            {% else %}⚪{% endif %}
+        </div>
+        <div class="wish-body">
+            <div class="wish-name">{{ w.name }}</div>
+            {% if w.link %}
+            <a href="{{ w.link }}" target="_blank" class="wish-link">{{ w.link }}</a>
+            {% endif %}
+        </div>
+        <div class="wish-price">{{ "%.0f"|format(w.price) }} ₽</div>
+        <form method="POST" action="/wishes/toggle/{{ w.id }}" class="toggle-form">
+            <button type="submit" class="checkbox"></button>
+        </form>
+        <form method="POST" action="/wishes/delete/{{ w.id }}" class="delete-form">
+            <button type="submit" class="btn-delete" onclick="return confirm('Удалить?')">✕</button>
+        </form>
+    </div>
+    {% endfor %}
+
+    {% set done_wishes = wishes | selectattr('done') | list %}
+    {% if done_wishes %}
+    <div class="done-block">
+        <div class="done-title">Выполнено ({{ done_wishes | length }})</div>
+        {% for w in done_wishes %}
+        <div class="wish wish-done">
+            <div class="wish-priority">
+                {% if w.priority == 'urgent' %}🔴
+                {% elif w.priority == 'dream' %}🟡
+                {% elif w.priority == 'gift' %}🟢
+                {% else %}⚪{% endif %}
+            </div>
+            <div class="wish-body">
+                <div class="wish-name">{{ w.name }}</div>
+            </div>
+            <div class="wish-price">{{ "%.0f"|format(w.price) }} ₽</div>
+            <form method="POST" action="/wishes/toggle/{{ w.id }}" class="toggle-form">
+                <button type="submit" class="checkbox checked">✓</button>
+            </form>
+            <form method="POST" action="/wishes/delete/{{ w.id }}" class="delete-form">
+                <button type="submit" class="btn-delete">✕</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not wishes %}
+    <p class="empty">Пока пусто. Добавь первое желание!</p>
+    {% endif %}
+</div>
 {% endblock %}
