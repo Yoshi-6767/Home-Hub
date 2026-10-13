@@ -37,16 +37,27 @@ class ShoppingItem(db.Model):
     list_id = db.Column(db.Integer, db.ForeignKey('shopping_list.id'), nullable=False)
 
 
+class Wish(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    link = db.Column(db.String(500), default='')
+    price = db.Column(db.Float, default=0)
+    priority = db.Column(db.String(20), default='normal')
+    done = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 with app.app_context():
     db.create_all()
 
 
-# --- Маршруты ---
+# --- Главная ---
 @app.route('/')
 def index():
     return render_template('index.html')
 
 
+# --- Покупки ---
 @app.route('/shopping')
 def shopping():
     lists = ShoppingList.query.order_by(ShoppingList.created_at.desc()).all()
@@ -103,16 +114,60 @@ def shopping_delete_list(list_id):
     return redirect(url_for('shopping'))
 
 
+# --- Желания ---
 @app.route('/wishes')
 def wishes():
-    return render_template('wishes.html')
+    wishes = Wish.query.order_by(Wish.done, Wish.created_at.desc()).all()
+    total = sum(w.price for w in wishes if not w.done)
+    return render_template('wishes.html', wishes=wishes, total=total)
 
 
+@app.route('/wishes/add', methods=['POST'])
+def wishes_add():
+    name = request.form.get('name', '').strip()
+    link = request.form.get('link', '').strip()
+    price = request.form.get('price', '0').strip()
+    priority = request.form.get('priority', 'normal')
+
+    if name:
+        try:
+            price_val = float(price) if price else 0
+        except ValueError:
+            price_val = 0
+
+        db.session.add(Wish(
+            name=name,
+            link=link,
+            price=price_val,
+            priority=priority
+        ))
+        db.session.commit()
+    return redirect(url_for('wishes'))
+
+
+@app.route('/wishes/toggle/<int:wish_id>', methods=['POST'])
+def wishes_toggle(wish_id):
+    wish = Wish.query.get_or_404(wish_id)
+    wish.done = not wish.done
+    db.session.commit()
+    return redirect(url_for('wishes'))
+
+
+@app.route('/wishes/delete/<int:wish_id>', methods=['POST'])
+def wishes_delete(wish_id):
+    wish = Wish.query.get_or_404(wish_id)
+    db.session.delete(wish)
+    db.session.commit()
+    return redirect(url_for('wishes'))
+
+
+# --- Календарь ---
 @app.route('/calendar')
 def calendar():
     return render_template('calendar.html')
 
 
+# --- Рецепты ---
 @app.route('/recipes')
 def recipes():
     return render_template('recipes.html')
