@@ -349,6 +349,16 @@ def calendar_event_delete(event_id):
     db.session.commit()
     return redirect(url_for('calendar'))
 
+@app.route('/migrate-repeat-secret')
+def migrate_repeat():
+    from sqlalchemy import text
+    try:
+        db.session.execute(text("ALTER TABLE event ADD COLUMN repeat VARCHAR(20) DEFAULT 'none'"))
+        db.session.commit()
+        return "Колонка добавлена"
+    except Exception as e:
+        return f"Ошибка: {e}"
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
