@@ -1,6 +1,6 @@
 import os
 import platform
-from datetime import datetime
+from datetime import datetime, date
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
@@ -44,6 +44,21 @@ class Wish(db.Model):
     price = db.Column(db.Float, default=0)
     priority = db.Column(db.String(20), default='normal')
     done = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    color = db.Column(db.String(20), default='#FF6B00')
+    events = db.relationship('Event', backref='category', cascade='all, delete-orphan')
+
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, default='')
+    date = db.Column(db.Date, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -164,7 +179,100 @@ def wishes_delete(wish_id):
 # --- Календарь ---
 @app.route('/calendar')
 def calendar():
-    return render_template('calendar.html')
+    from calendar import monthrange
+    import datetime as dt
+
+    today = dt.date.today()
+    year = request.args.get('year', today.year, type=int)
+    month = request.args.get('month', today.month, type=int)
+
+    if month < 1:
+        month = 12
+        year -= 1
+    elif month > 12:
+        month = 1
+        year += 1
+
+    first_weekday, days_in_month = monthrange(year, month)
+    # first_weekday: 0 = понедельник, 6 = воскресенье (в Python)
+    # приведём к 0 = понедельник, но нам нужен первый день недели = понедельник
+    first_weekday = (first_weekday) % 7  # 0 = понедельник
+
+    events = Event.query.filter(
+        db.extract('year', Event.date) == year,
+        db.extract('month', Event.date) == month
+    ).all()
+
+    events_by_day = {}
+    for e in events:
+        events_by_day.setdefault(e.date.day, []).append(e)
+
+    categories = Category.query.all()
+
+    month_names = ['', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                   'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+
+    return render_template('calendar.html',
+                           year=year, month=month,
+                           month_name=month_names[month],
+                           first_weekday=first_weekday,
+                           days_in_month=days_in_month,
+                           events_by_day=events_by_day,
+                           categories=categories,
+                           today=today)
+
+
+@app.route('/calendar/add-event', methods=['POST'])
+def calendar_add_event():
+    title = request.form.get('title', '').strip()
+    date_str = request.form.get('date', '')
+    description = request.form.get('description', '').strip()
+    category_id = request.form.get('category_id', type=int)
+
+    if title and date_str:
+        try:
+            event_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return redirect(url_for('calendar'))
+
+        db.session.add(Event(
+            title=title,
+            date=event_date,
+            description=description,
+            category_id=category_id if category_id else None
+        ))
+        db.session.commit()
+    return redirect(url_for('calendar', year=event_date.year, month=event_date.month))
+
+
+@app.route('/calendar/delete-event/<int:event_id>', methods=['POST'])
+def calendar_delete_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    db.session.delete(event)
+    db.session.commit()
+    return redirect(url_for('calendar'))
+
+
+@app.route('/calendar/categories', methods=['GET', 'POST'])
+def calendar_categories():
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        color = request.form.get('color', '#FF6B00')
+        if name:
+            db.session.add(Category(name=name, color=color))
+            db.session.commit()
+        return redirect(url_for('calendar_categories'))
+
+    categories = Category.query.all()
+    return render_template('calendar_categories.html', categories=categories)
+
+
+@app.route('/calendar/categories/delete/<int:cat_id>', methods=['POST'])
+def calendar_delete_category(cat_id):
+    cat = Category.query.get_or_404(cat_id)
+    db.session.delete(cat)
+    db.session.commit()
+    return redirect(url_for('calendar_categories'))
 
 
 # --- Рецепты ---
