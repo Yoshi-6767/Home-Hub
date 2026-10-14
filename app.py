@@ -349,6 +349,12 @@ def calendar_event_delete(event_id):
     db.session.commit()
     return redirect(url_for('calendar'))
 
+@app.route('/reset-db-secret')
+def reset_db():
+    db.drop_all()
+    db.create_all()
+    return "База пересоздана"
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
