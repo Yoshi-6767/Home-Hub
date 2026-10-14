@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/calendar" class="back-link">← Назад к календарю</a>
+<h1>🎨 Категории</h1>
+<p class="subtitle">Создай категории и выбери им цвета</p>
+
+<form method="POST" action="/calendar/categories" class="add-form">
+    <input type="text" name="name" placeholder="Название (Работа, Семья)" required>
+    <input type="color" name="color" value="#FF6B00" class="color-input">
+    <button type="submit" class="btn-primary">Создать</button>
+</form>
+
+<div class="categories-list">
+    {% for cat in categories %}
+    <div class="category-item">
+        <span class="category-dot" style="background: {{ cat.color }}"></span>
+        <span class="category-name">{{ cat.name }}</span>
+        <form method="POST" action="/calendar/categories/delete/{{ cat.id }}" class="delete-form">
+            <button type="submit" class="btn-delete" onclick="return confirm('Удалить категорию?')">✕</button>
+        </form>
+    </div>
+    {% else %}
+    <p class="empty">Пока нет категорий. Создай первую!</p>
+    {% endfor %}
+</div>
+{% endblock %}
