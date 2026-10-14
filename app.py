@@ -58,6 +58,7 @@ class Event(db.Model):
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, default='')
     date = db.Column(db.Date, nullable=False)
+    repeat = db.Column(db.String(20), default='none')  # none, weekly, monthly, yearly
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -177,6 +178,21 @@ def wishes_delete(wish_id):
 
 
 # --- Календарь ---
+def event_occurs_on(event, target_date):
+    """Проверяет, попадает ли событие на указанную дату (с учётом повторений)."""
+    if event.repeat == 'none':
+        return event.date == target_date
+    if event.repeat == 'weekly':
+        return event.date.weekday() == target_date.weekday() and event.date <= target_date
+    if event.repeat == 'monthly':
+        return event.date.day == target_date.day and event.date <= target_date
+    if event.repeat == 'yearly':
+        return (event.date.day == target_date.day and
+                event.date.month == target_date.month and
+                event.date <= target_date)
+    return False
+
+
 @app.route('/calendar')
 def calendar():
     from calendar import monthrange
@@ -194,18 +210,17 @@ def calendar():
         year += 1
 
     first_weekday, days_in_month = monthrange(year, month)
-    # first_weekday: 0 = понедельник, 6 = воскресенье (в Python)
-    # приведём к 0 = понедельник, но нам нужен первый день недели = понедельник
-    first_weekday = (first_weekday) % 7  # 0 = понедельник
+    first_weekday = (first_weekday) % 7
 
-    events = Event.query.filter(
-        db.extract('year', Event.date) == year,
-        db.extract('month', Event.date) == month
-    ).all()
+    # Все события (для проверки повторений)
+    all_events = Event.query.all()
 
     events_by_day = {}
-    for e in events:
-        events_by_day.setdefault(e.date.day, []).append(e)
+    for day in range(1, days_in_month + 1):
+        target = dt.date(year, month, day)
+        for e in all_events:
+            if event_occurs_on(e, target):
+                events_by_day.setdefault(day, []).append(e)
 
     categories = Category.query.all()
 
@@ -222,12 +237,52 @@ def calendar():
                            today=today)
 
 
+@app.route('/calendar/year')
+def calendar_year():
+    import datetime as dt
+    from calendar import monthrange
+
+    today = dt.date.today()
+    year = request.args.get('year', today.year, type=int)
+    all_events = Event.query.all()
+
+    months_data = []
+    for m in range(1, 13):
+        first_weekday, days_in_month = monthrange(year, m)
+        first_weekday = first_weekday % 7
+
+        days_with_events = set()
+        for day in range(1, days_in_month + 1):
+            target = dt.date(year, m, day)
+            for e in all_events:
+                if event_occurs_on(e, target):
+                    days_with_events.add(day)
+                    break
+
+        months_data.append({
+            'num': m,
+            'first_weekday': first_weekday,
+            'days': days_in_month,
+            'events': days_with_events
+        })
+
+    month_names = ['', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                   'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+
+    return render_template('calendar_year.html',
+                           year=year,
+                           months_data=months_data,
+                           month_names=month_names,
+                           today=today)
+
+
 @app.route('/calendar/add-event', methods=['POST'])
 def calendar_add_event():
     title = request.form.get('title', '').strip()
     date_str = request.form.get('date', '')
     description = request.form.get('description', '').strip()
     category_id = request.form.get('category_id', type=int)
+    repeat = request.form.get('repeat', 'none')
 
     if title and date_str:
         try:
@@ -239,11 +294,12 @@ def calendar_add_event():
             title=title,
             date=event_date,
             description=description,
+            repeat=repeat,
             category_id=category_id if category_id else None
         ))
         db.session.commit()
-    return redirect(url_for('calendar', year=event_date.year, month=event_date.month))
-
+        return redirect(url_for('calendar', year=event_date.year, month=event_date.month))
+    return redirect(url_for('calendar'))
 
 @app.route('/calendar/delete-event/<int:event_id>', methods=['POST'])
 def calendar_delete_event(event_id):
@@ -280,6 +336,18 @@ def calendar_delete_category(cat_id):
 def recipes():
     return render_template('recipes.html')
 
+@app.route('/calendar/event/<int:event_id>')
+def calendar_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    return render_template('calendar_event.html', event=event)
+
+
+@app.route('/calendar/event/<int:event_id>/delete', methods=['POST'])
+def calendar_event_delete(event_id):
+    event = Event.query.get_or_404(event_id)
+    db.session.delete(event)
+    db.session.commit()
+    return redirect(url_for('calendar'))
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
