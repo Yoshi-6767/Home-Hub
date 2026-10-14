@@ -7,6 +7,7 @@
         <a href="/calendar?year={{ year }}&month={{ month - 1 }}" class="btn-nav">←</a>
         <a href="/calendar" class="btn-nav">Сегодня</a>
         <a href="/calendar?year={{ year }}&month={{ month + 1 }}" class="btn-nav">→</a>
+        <a href="/calendar/year?year={{ year }}" class="btn-nav">📆 Год</a>
     </div>
 </div>
 
@@ -38,9 +39,9 @@
         <div class="day-number">{{ day }}</div>
         <div class="day-events">
             {% for e in events_by_day.get(day, []) %}
-            <div class="day-event" style="background: {{ e.category.color if e.category else '#BDBDBD' }}" title="{{ e.title }}">
+            <a href="/calendar/event/{{ e.id }}" class="day-event" style="background: {{ e.category.color if e.category else '#BDBDBD' }}" title="{{ e.title }}">
                 {{ e.title }}
-            </div>
+            </a>
             {% endfor %}
         </div>
     </div>
@@ -57,6 +58,12 @@
             {% for cat in categories %}
             <option value="{{ cat.id }}">{{ cat.name }}</option>
             {% endfor %}
+        </select>
+        <select name="repeat" class="input-small">
+            <option value="none">Не повторять</option>
+            <option value="weekly">Каждую неделю</option>
+            <option value="monthly">Каждый месяц</option>
+            <option value="yearly">Каждый год</option>
         </select>
         <input type="text" name="description" placeholder="Описание (необязательно)">
         <button type="submit" class="btn-primary">Добавить</button>
