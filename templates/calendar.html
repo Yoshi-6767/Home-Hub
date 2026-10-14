@@ -1,6 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>📅 Календарь</h1>
-<p class="subtitle">События и даты. Скоро тут будет логика.</p>
+<div class="calendar-header">
+    <h1>📅 {{ month_name }} {{ year }}</h1>
+    <div class="calendar-nav">
+        <a href="/calendar?year={{ year }}&month={{ month - 1 }}" class="btn-nav">←</a>
+        <a href="/calendar" class="btn-nav">Сегодня</a>
+        <a href="/calendar?year={{ year }}&month={{ month + 1 }}" class="btn-nav">→</a>
+    </div>
+</div>
+
+<div class="calendar-legend">
+    {% for cat in categories %}
+    <div class="legend-item">
+        <span class="legend-dot" style="background: {{ cat.color }}"></span>
+        {{ cat.name }}
+    </div>
+    {% endfor %}
+    <a href="/calendar/categories" class="legend-settings">⚙️ Категории</a>
+</div>
+
+<div class="calendar-grid">
+    <div class="weekday">Пн</div>
+    <div class="weekday">Вт</div>
+    <div class="weekday">Ср</div>
+    <div class="weekday">Чт</div>
+    <div class="weekday">Пт</div>
+    <div class="weekday">Сб</div>
+    <div class="weekday">Вс</div>
+
+    {% for _ in range(first_weekday) %}
+    <div class="day empty-day"></div>
+    {% endfor %}
+
+    {% for day in range(1, days_in_month + 1) %}
+    <div class="day {% if today.year == year and today.month == month and today.day == day %}today{% endif %}">
+        <div class="day-number">{{ day }}</div>
+        <div class="day-events">
+            {% for e in events_by_day.get(day, []) %}
+            <div class="day-event" style="background: {{ e.category.color if e.category else '#BDBDBD' }}" title="{{ e.title }}">
+                {{ e.title }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="calendar-add">
+    <h2>Добавить событие</h2>
+    <form method="POST" action="/calendar/add-event" class="add-form calendar-form">
+        <input type="text" name="title" placeholder="Название" required>
+        <input type="date" name="date" required class="input-small">
+        <select name="category_id" class="input-small">
+            <option value="">Без категории</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="description" placeholder="Описание (необязательно)">
+        <button type="submit" class="btn-primary">Добавить</button>
+    </form>
+</div>
 {% endblock %}
