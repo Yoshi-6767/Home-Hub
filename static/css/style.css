@@ -566,3 +566,133 @@ h1 {
     flex: 1;
     font-weight: 500;
 }
+
+/* Год */
+.year-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.mini-month {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.mini-month:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.1);
+}
+
+.mini-month-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-align: center;
+    color: var(--accent);
+}
+
+.mini-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.mini-weekday {
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.mini-day {
+    text-align: center;
+    font-size: 11px;
+    padding: 3px 0;
+    border-radius: 4px;
+    color: var(--text);
+}
+
+.mini-day.empty {
+    visibility: hidden;
+}
+
+.mini-day.has-event {
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+}
+
+.mini-day.today {
+    outline: 2px solid var(--accent);
+}
+
+/* Страница события */
+.event-detail {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    position: relative;
+    max-width: 700px;
+}
+
+.event-category-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.event-detail h1 {
+    margin-top: 12px;
+    margin-bottom: 20px;
+}
+
+.event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.event-meta-item {
+    font-size: 14px;
+}
+
+.event-meta-label {
+    color: var(--text-muted);
+    margin-right: 8px;
+}
+
+.event-description {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    white-space: pre-wrap;
+}
+
+.btn-danger {
+    padding: 12px 24px;
+    background: #E53935;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    opacity: 0.9;
+}
