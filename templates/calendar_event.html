@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="calendar-header">
+    <h1>📆 {{ year }}</h1>
+    <div class="calendar-nav">
+        <a href="/calendar/year?year={{ year - 1 }}" class="btn-nav">←</a>
+        <a href="/calendar?year={{ year }}&month=1" class="btn-nav">Месяц</a>
+        <a href="/calendar/year?year={{ year + 1 }}" class="btn-nav">→</a>
+    </div>
+</div>
+
+<div class="year-grid">
+    {% for m in months_data %}
+    <a href="/calendar?year={{ year }}&month={{ m.num }}" class="mini-month">
+        <div class="mini-month-title">{{ month_names[m.num] }}</div>
+        <div class="mini-grid">
+            <div class="mini-weekday">П</div>
+            <div class="mini-weekday">В</div>
+            <div class="mini-weekday">С</div>
+            <div class="mini-weekday">Ч</div>
+            <div class="mini-weekday">П</div>
+            <div class="mini-weekday">С</div>
+            <div class="mini-weekday">В</div>
+
+            {% for _ in range(m.first_weekday) %}
+            <div class="mini-day empty"></div>
+            {% endfor %}
+
+            {% for day in range(1, m.days + 1) %}
+            <div class="mini-day {% if day in m.events %}has-event{% endif %} {% if today.year == year and today.month == m.num and today.day == day %}today{% endif %}">
+                {{ day }}
+            </div>
+            {% endfor %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
