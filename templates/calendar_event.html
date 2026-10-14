@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/calendar" class="back-link">← Назад к календарю</a>
+
+<div class="event-detail">
+    <div class="event-category-bar" style="background: {{ event.category.color if event.category else '#BDBDBD' }}"></div>
+    <h1>{{ event.title }}</h1>
+
+    <div class="event-meta">
+        <div class="event-meta-item">
+            <span class="event-meta-label">Дата:</span>
+            <span>{{ event.date.strftime('%d.%m.%Y') }}</span>
+        </div>
+        {% if event.category %}
+        <div class="event-meta-item">
+            <span class="event-meta-label">Категория:</span>
+            <span>{{ event.category.name }}</span>
+        </div>
+        {% endif %}
+        <div class="event-meta-item">
+            <span class="event-meta-label">Повтор:</span>
+            <span>
+                {% if event.repeat == 'none' %}Не повторяется
+                {% elif event.repeat == 'weekly' %}Каждую неделю
+                {% elif event.repeat == 'monthly' %}Каждый месяц
+                {% elif event.repeat == 'yearly' %}Каждый год
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    {% if event.description %}
+    <div class="event-description">
+        {{ event.description }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/calendar/event/{{ event.id }}/delete" class="delete-form">
+        <button type="submit" class="btn-danger" onclick="return confirm('Удалить событие?')">Удалить событие</button>
+    </form>
+</div>
+{% endblock %}
