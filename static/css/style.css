@@ -696,3 +696,196 @@ h1 {
 .btn-danger:hover {
     opacity: 0.9;
 }
+
+/* --- Заметки (Список) --- */
+.notes-layout {
+    display: flex;
+    gap: 24px;
+    height: calc(100vh - 120px);
+}
+
+.notes-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+}
+
+.notes-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.notes-sidebar-header h2 {
+    font-size: 16px;
+    margin: 0;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--accent);
+}
+
+.folder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.folder-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.folder-item:hover, .folder-item.active {
+    background: var(--bg);
+    color: var(--accent);
+}
+
+.trash-link {
+    margin-top: 12px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
+
+.notes-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.notes-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.notes-topbar h1 {
+    margin: 0;
+}
+
+.search-form input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-family: inherit;
+}
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.note-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s;
+}
+
+.note-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.1);
+}
+
+.note-card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.note-title {
+    font-weight: 600;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.note-preview {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    flex: 1;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.note-date {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* --- Заметки (Редактор) --- */
+.note-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.note-edit-actions {
+    display: flex;
+    align-items: center;
+}
+
+.note-edit-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.note-title-input {
+    width: 100%;
+    font-size: 32px;
+    font-weight: 700;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    margin-bottom: 16px;
+    font-family: inherit;
+}
+
+/* Стили для редактора Quill */
+#editor-container {
+    background: var(--card-bg);
+    min-height: 400px;
+    font-size: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.ql-toolbar {
+    border-radius: var(--radius) var(--radius) 0 0 !important;
+    background: var(--card-bg);
+    border-color: var(--border) !important;
+}
+
+.ql-container {
+    border-color: var(--border) !important;
+    border-radius: 0 0 var(--radius) var(--radius) !important;
+    font-family: inherit !important;
+}
