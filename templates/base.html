@@ -9,23 +9,24 @@
 </head>
 <body>
     <div class="layout">
-        <header class="header">
-            <div class="logo">Home Hub</div>
-            <div class="user">Вова ▼</div>
-        </header>
-
+        <!-- Левая панель с меню -->
         <aside class="sidebar">
-            <nav>
+            <div class="logo">
+                Home Hub
+            </div>
+            
+            <nav style="flex: 1;">
                 <a href="/" class="nav-item">🏠 Главная</a>
                 <a href="/shopping" class="nav-item">📋 Покупки</a>
                 <a href="/wishes" class="nav-item">🎁 Желания</a>
                 <a href="/calendar" class="nav-item">📅 Календарь</a>
-                <a href="/recipes" class="nav-item">🍳 Рецепты</a>
                 <a href="/notes" class="nav-item">📝 Заметки</a>
                 <a href="/subscriptions" class="nav-item">💳 Подписки</a>
+                <a href="/recipes" class="nav-item">🍳 Рецепты</a>
             </nav>
         </aside>
 
+        <!-- Основная рабочая область (сюда загружаются страницы) -->
         <main class="content">
             {% block content %}{% endblock %}
         </main>
