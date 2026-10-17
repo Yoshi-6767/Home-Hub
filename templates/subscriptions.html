@@ -10,7 +10,7 @@
         </div>
         
         <form id="new-cat-form" method="POST" action="/subscriptions/category/create" style="display:none; margin-bottom: 10px;">
-            <input type="text" name="name" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 4px;">
+            <input type="text" name="name" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 4px; background: var(--bg); color: var(--text);">
             <div style="display:flex; gap:4px;">
                 <input type="color" name="color" value="#FF6B00" style="width:40px; height: 32px; border:none; border-radius:6px; cursor:pointer;">
                 <button type="submit" class="btn-primary" style="flex:1;">ОК</button>
@@ -76,7 +76,7 @@
                     <option value="📱">📱</option>
                     <option value="⚡">⚡</option>
                 </select>
-                <input type="text" name="notes" placeholder="Заметка (необязательно)" style="flex:1;">
+                <input type="text" name="notes" placeholder="Заметка" style="flex:1;">
                 <button type="submit" class="btn-primary">Сохранить</button>
             </div>
         </form>
