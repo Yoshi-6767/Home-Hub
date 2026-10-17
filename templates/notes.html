@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="notes-layout">
+    <!-- Сайдбар с папками -->
+    <aside class="notes-sidebar">
+        <div class="notes-sidebar-header">
+            <h2>Папки</h2>
+            <button class="btn-icon" onclick="document.getElementById('new-folder-form').style.display='block'">+</button>
+        </div>
+        
+        <form id="new-folder-form" method="POST" action="/notes/folder/create" style="display:none; margin-bottom: 10px;">
+            <input type="text" name="name" placeholder="Название папки" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 4px;">
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 8px;">Создать</button>
+        </form>
+
+        <nav class="folder-list">
+            <a href="/notes" class="folder-item {% if not current_folder %}active{% endif %}">
+                📁 Все заметки
+            </a>
+            {% for folder in folders %}
+            <a href="/notes?folder_id={{ folder.id }}" class="folder-item {% if current_folder == folder.id %}active{% endif %}">
+                📁 {{ folder.name }}
+            </a>
+            {% endfor %}
+            <a href="/notes/trash" class="folder-item trash-link">
+                🗑️ Корзина
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Основная область -->
+    <div class="notes-main">
+        <div class="notes-topbar">
+            <h1>Заметки</h1>
+            <form method="POST" action="/notes/new">
+                {% if current_folder %}
+                <input type="hidden" name="folder_id" value="{{ current_folder }}">
+                {% endif %}
+                <button type="submit" class="btn-primary">+ Новая заметка</button>
+            </form>
+        </div>
+
+        <form method="GET" action="/notes" class="search-form">
+            <input type="text" name="q" value="{{ search }}" placeholder="Поиск по заметкам...">
+            {% if current_folder %}
+            <input type="hidden" name="folder_id" value="{{ current_folder }}">
+            {% endif %}
+        </form>
+
+        <div class="notes-grid">
+            {% for note in notes %}
+            <a href="/notes/{{ note.id }}" class="note-card">
+                <div class="note-card-header">
+                    <div class="note-title">{{ note.title or 'Без названия' }}</div>
+                    {% if note.pinned %}
+                    <span class="note-pin">📌</span>
+                    {% endif %}
+                </div>
+                <div class="note-preview">
+                    {{ note.body | striptags | truncate(100) or 'Пустая заметка' }}
+                </div>
+                <div class="note-date">{{ note.updated_at.strftime('%d.%m.%Y %H:%M') }}</div>
+            </a>
+            {% else %}
+            <p class="empty">Заметок пока нет. Создай первую!</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
