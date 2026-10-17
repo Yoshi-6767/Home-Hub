@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/notes" class="back-link">← Назад к заметкам</a>
+<h1>🗑️ Корзина</h1>
+<p class="subtitle">Заметки хранятся здесь, пока ты их не удалишь навсегда.</p>
+
+<div class="notes-grid">
+    {% for note in notes %}
+    <div class="note-card">
+        <div class="note-card-header">
+            <div class="note-title">{{ note.title or 'Без названия' }}</div>
+        </div>
+        <div class="note-preview">
+            {{ note.body | striptags | truncate(100) or 'Пустая заметка' }}
+        </div>
+        <div class="note-date">{{ note.updated_at.strftime('%d.%m.%Y %H:%M') }}</div>
+        
+        <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <form method="POST" action="/notes/{{ note.id }}/restore">
+                <button type="submit" class="btn-primary" style="padding: 6px 12px; font-size: 12px;">Восстановить</button>
+            </form>
+            <form method="POST" action="/notes/{{ note.id }}/destroy">
+                <button type="submit" class="btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="return confirm('Удалить навсегда?')">Удалить навсегда</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <p class="empty">Корзина пуста.</p>
+    {% endfor %}
+</div>
+{% endblock %}
