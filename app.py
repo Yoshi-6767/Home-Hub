@@ -182,12 +182,6 @@ def sub_delete(sub_id):
 def recipes():
     return render_template('recipes.html')
 
-@app.route('/reset-db-for-subs')
-def reset_db():
-    db.drop_all()
-    db.create_all()
-    return "База сброшена! Подписки готовы."
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
