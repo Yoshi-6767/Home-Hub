@@ -392,6 +392,11 @@ def uploaded_file(filename):
 def recipes():
     return render_template('recipes.html')
 
+@app.route('/reset-db-for-notes')
+def reset_db_for_notes():
+    db.drop_all()
+    db.create_all()
+    return "База успешно очищена и создана заново со всеми таблицами!"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
