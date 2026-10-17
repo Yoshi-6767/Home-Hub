@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Подключаем CSS редактора Quill -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<div class="note-edit-header">
+    <a href="/notes" class="back-link">← Назад</a>
+    
+    <div class="note-edit-actions">
+        <span id="save-status" style="color: var(--text-muted); font-size: 14px; margin-right: 12px;">Сохранено</span>
+        
+        <select id="folder-select" class="input-small" style="margin-right: 8px;">
+            <option value="">Без папки</option>
+            {% for folder in folders %}
+            <option value="{{ folder.id }}" {% if note.folder_id == folder.id %}selected{% endif %}>{{ folder.name }}</option>
+            {% endfor %}
+        </select>
+
+        <form method="POST" action="/notes/{{ note.id }}/pin" style="display:inline;">
+            <button type="submit" class="btn-nav" title="Закрепить">📌</button>
+        </form>
+
+        <form method="POST" action="/notes/{{ note.id }}/delete" style="display:inline;">
+            <button type="submit" class="btn-delete" title="В корзину">🗑️</button>
+        </form>
+    </div>
+</div>
+
+<div class="note-edit-container">
+    <input type="text" id="note-title" class="note-title-input" value="{{ note.title }}" placeholder="Заголовок...">
+    
+    <!-- Скрытое поле для хранения HTML-текста -->
+    <input type="hidden" id="note-body-hidden" value="{{ note.body }}">
+    
+    <!-- Контейнер для редактора Quill -->
+    <div id="editor-container"></div>
+</div>
+
+<!-- Подключаем JS редактора Quill -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    // Инициализация редактора
+    var quill = new Quill('#editor-container', {
+        theme: 'snow',
+        placeholder: 'Пиши здесь...',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['link', 'image'],
+                ['clean']
+            ]
+        }
+    });
+
+    // Загружаем сохраненный HTML из базы в редактор
+    var savedBody = document.getElementById('note-body-hidden').value;
+    if (savedBody) {
+        quill.clipboard.dangerouslyPasteHTML(savedBody);
+    }
+
+    // --- ЛОГИКА АВТОСОХРАНЕНИЯ ---
+    var noteId = {{ note.id }};
+    var saveStatus = document.getElementById('save-status');
+    var folderSelect = document.getElementById('folder-select');
+    var titleInput = document.getElementById('note-title');
+    var isSaving = false;
+
+    function saveNote() {
+        if (isSaving) return;
+        isSaving = true;
+        saveStatus.innerText = 'Сохраняем...';
+        saveStatus.style.color = '#FF6B00'; // Оранжевый
+
+        var data = {
+            title: titleInput.value,
+            body: quill.root.innerHTML,
+            folder_id: folderSelect.value
+        };
+
+        fetch('/notes/' + noteId + '/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(res => {
+            if (res.status === 'ok') {
+                saveStatus.innerText = 'Сохранено в ' + res.time;
+                saveStatus.style.color = 'var(--text-muted)';
+            }
+            isSaving = false;
+        })
+        .catch(err => {
+            saveStatus.innerText = 'Ошибка сохранения!';
+            saveStatus.style.color = 'red';
+            isSaving = false;
+        });
+    }
+
+    // Сохраняем при вводе текста (с задержкой 1.5 секунды, чтобы не спамить сервер)
+    var timer;
+    function debounceSave() {
+        clearTimeout(timer);
+        timer = setTimeout(saveNote, 1500);
+    }
+
+    // Слушатели событий
+    quill.on('text-change', debounceSave);
+    titleInput.addEventListener('input', debounceSave);
+    folderSelect.addEventListener('change', saveNote);
+
+    // --- ЗАГРУЗКА КАРТИНОК ---
+    // Переопределяем стандартное поведение Quill для картинок
+    var toolbar = quill.getModule('toolbar');
+    toolbar.addHandler('image', function() {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = function() {
+            var file = input.files[0];
+            if (file) {
+                var formData = new FormData();
+                formData.append('image', file);
+
+                // Меняем статус, пока грузится картинка
+                saveStatus.innerText = 'Загрузка фото...';
+
+                fetch('/uploads', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(res => {
+                    if (res.url) {
+                        var range = quill.getSelection(true);
+                        quill.insertEmbed(range.index, 'image', res.url);
+                        // Сдвигаем курсор после картинки
+                        quill.setSelection(range.index + 1);
+                        saveNote(); // Сразу сохраняем заметку с картинкой
+                    }
+                })
+                .catch(err => {
+                    alert('Ошибка загрузки картинки');
+                });
+            }
+        };
+    });
+</script>
+{% endblock %}
