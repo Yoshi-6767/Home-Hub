@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="subs-layout">
+    <!-- Сайдбар: Категории и Добавление -->
+    <aside class="subs-sidebar">
+        <div class="notes-sidebar-header">
+            <h2>Категории</h2>
+            <button class="btn-icon" onclick="document.getElementById('new-cat-form').style.display='block'">+</button>
+        </div>
+        
+        <form id="new-cat-form" method="POST" action="/subscriptions/category/create" style="display:none; margin-bottom: 10px;">
+            <input type="text" name="name" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 4px;">
+            <div style="display:flex; gap:4px;">
+                <input type="color" name="color" value="#FF6B00" style="width:40px; height: 32px; border:none; border-radius:6px; cursor:pointer;">
+                <button type="submit" class="btn-primary" style="flex:1;">ОК</button>
+            </div>
+        </form>
+
+        <nav class="folder-list">
+            {% for cat in cats %}
+            <div class="folder-item">
+                <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:{{ cat.color }}; margin-right:8px;"></span>
+                {{ cat.name }}
+            </div>
+            {% endfor %}
+        </nav>
+    </aside>
+
+    <!-- Основная часть -->
+    <div class="subs-main">
+        <div class="notes-topbar">
+            <h1>Подписки</h1>
+            <button class="btn-primary" onclick="document.getElementById('add-sub-form').style.display='flex'">+ Добавить</button>
+        </div>
+
+        <!-- Блок статистики -->
+        <div class="subs-stats">
+            <div class="stat-box">
+                <div class="stat-label">В месяц</div>
+                <div class="stat-value">{{ "%.0f"|format(total_monthly) }} ₽</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">В год</div>
+                <div class="stat-value">{{ "%.0f"|format(total_yearly) }} ₽</div>
+            </div>
+        </div>
+
+        <!-- Форма добавления (скрытая) -->
+        <form id="add-sub-form" method="POST" action="/subscriptions/add" class="add-form" style="display:none; flex-direction: column; background: var(--card-bg); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 24px; gap: 12px;">
+            <div style="display:flex; gap:12px; flex-wrap: wrap;">
+                <input type="text" name="name" placeholder="Название (без примеров)" required style="flex:1;">
+                <input type="number" name="price" placeholder="Цена" required step="0.01" style="width: 120px;">
+                <select name="period" style="width: 150px;">
+                    <option value="monthly">Ежемесячно</option>
+                    <option value="yearly">Ежегодно</option>
+                    <option value="weekly">Еженедельно</option>
+                </select>
+                <input type="date" name="next_date" required title="Дата следующего списания">
+                <select name="category_id" style="width: 150px;">
+                    <option value="">Без категории</option>
+                    {% for cat in cats %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="display:flex; gap:12px; align-items: center;">
+                <select name="icon" style="width: 80px; font-size: 20px;">
+                    <option value="📦">📦</option>
+                    <option value="🎵">🎵</option>
+                    <option value="🎬">🎬</option>
+                    <option value="💻">💻</option>
+                    <option value="🎮">🎮</option>
+                    <option value="☁️">☁️</option>
+                    <option value="🛡️">🛡️</option>
+                    <option value="📱">📱</option>
+                    <option value="⚡">⚡</option>
+                </select>
+                <input type="text" name="notes" placeholder="Заметка (необязательно)" style="flex:1;">
+                <button type="submit" class="btn-primary">Сохранить</button>
+            </div>
+        </form>
+
+        <!-- Сетка подписок -->
+        <div class="subs-grid">
+            {% for sub in subs %}
+            <div class="sub-card">
+                <div class="sub-header">
+                    <div class="sub-icon">{{ sub.icon }}</div>
+                    <div class="sub-title">{{ sub.name }}</div>
+                    <form method="POST" action="/subscriptions/delete/{{ sub.id }}" style="margin-left:auto;">
+                        <button type="submit" class="btn-delete" onclick="return confirm('Удалить подписку?')">✕</button>
+                    </form>
+                </div>
+                
+                <div class="sub-price">{{ "%.0f"|format(sub.price) }} ₽ <span class="sub-period">/ {% if sub.period == 'monthly' %}мес{% elif sub.period == 'yearly' %}год{% else %}нед{% endif %}</span></div>
+                
+                {% set days_left = (sub.next_date - today).days %}
+                <div class="sub-date {% if days_left <= 3 %}sub-date-urgent{% endif %}">
+                    {% if days_left < 0 %}
+                        Просрочено!
+                    {% elif days_left == 0 %}
+                        Сегодня
+                    {% else %}
+                        Через {{ days_left }} дн. ({{ sub.next_date.strftime('%d.%m.%Y') }})
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <p class="empty">Подписок пока нет.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
