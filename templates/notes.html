@@ -10,7 +10,7 @@
         </div>
         
         <form id="new-folder-form" method="POST" action="/notes/folder/create" style="display:none; margin-bottom: 10px;">
-            <input type="text" name="name" placeholder="Название папки" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 4px;">
+            <input type="text" name="name" placeholder="Название папки" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 4px; background: var(--bg); color: var(--text);">
             <button type="submit" class="btn-primary" style="width: 100%; padding: 8px;">Создать</button>
         </form>
 
@@ -42,7 +42,7 @@
         </div>
 
         <form method="GET" action="/notes" class="search-form">
-            <input type="text" name="q" value="{{ search }}" placeholder="Поиск по заметкам...">
+            <input type="text" name="q" value="{{ search }}" placeholder="Поиск...">
             {% if current_folder %}
             <input type="hidden" name="folder_id" value="{{ current_folder }}">
             {% endif %}
