@@ -1,11 +1,11 @@
 :root {
     /* Цвета прямо со скрина DeepSeek */
-    --bg: #212121;              /* Тёмно-серый фон (как чат) */
-    --sidebar-bg: #171717;      /* Ещё более тёмный фон меню */
-    --card-bg: #2f2f2f;         /* Фон карточек, кнопок и полей ввода */
-    --text: #ececec;            /* Светлый текст */
-    --text-muted: #b4b4b4;      /* Серый текст */
-    --border: #424242;          /* Границы */
+    --bg: #212121;              
+    --sidebar-bg: #171717;      
+    --card-bg: #2f2f2f;         
+    --text: #ececec;            
+    --text-muted: #b4b4b4;      
+    --border: #424242;          
     
     /* Наш акцентный цвет */
     --accent: #FF6B00;          
@@ -34,7 +34,7 @@ body {
     overflow: hidden;
 }
 
-/* --- Боковая панель (как в DeepSeek) --- */
+/* --- Боковая панель --- */
 .sidebar {
     width: 260px;
     background: var(--sidebar-bg);
@@ -86,6 +86,7 @@ h1 {
     font-size: 24px;
     font-weight: 600;
     color: var(--text);
+    margin-bottom: 8px;
 }
 
 .subtitle {
@@ -94,7 +95,7 @@ h1 {
     margin-bottom: 24px;
 }
 
-/* --- Сетка карточек (на главной) --- */
+/* --- Сетка карточек (Главная) --- */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -116,28 +117,12 @@ h1 {
     background: var(--card-bg);
 }
 
-.card-icon {
-    font-size: 28px;
-    margin-bottom: 16px;
-}
-
-.card-title {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 4px;
-}
-
-.card-desc {
-    color: var(--text-muted);
-    font-size: 13px;
-}
+.card-icon { font-size: 28px; margin-bottom: 16px; }
+.card-title { font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+.card-desc { color: var(--text-muted); font-size: 13px; }
 
 /* --- Формы и кнопки --- */
-.add-form {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 24px;
-}
+.add-form { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
 
 .add-form input, .add-form select {
     padding: 12px 16px;
@@ -150,9 +135,7 @@ h1 {
     outline: none;
 }
 
-.add-form input:focus, .add-form select:focus {
-    border-color: var(--accent);
-}
+.add-form input:focus, .add-form select:focus { border-color: var(--accent); }
 
 .btn-primary {
     padding: 12px 24px;
@@ -167,9 +150,7 @@ h1 {
     transition: background 0.2s;
 }
 
-.btn-primary:hover {
-    background: var(--accent-hover);
-}
+.btn-primary:hover { background: var(--accent-hover); }
 
 .btn-delete {
     background: none;
@@ -180,54 +161,113 @@ h1 {
     padding: 4px 8px;
     border-radius: 6px;
 }
-.btn-delete:hover {
-    background: #442222;
-    color: #ff4444;
-}
+.btn-delete:hover { background: #442222; color: #ff4444; }
 
-/* --- Прочие элементы (для заметок и списков) --- */
-.notes-sidebar, .list-card, .item, .note-card, .sub-card {
+.btn-icon { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--accent); }
+
+/* --- Общие карточки (Покупки, Желания) --- */
+.list-card, .item, .note-card, .sub-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
 }
 
 .item { padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
-.notes-sidebar { padding: 16px; }
 .note-card, .sub-card { padding: 16px; color: var(--text); text-decoration: none;}
 
-/* --- Фиксы для страницы Подписок --- */
-.subs-layout { display: flex; gap: 24px; }
-.subs-sidebar {
-    width: 250px; flex-shrink: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px; height: fit-content;
+/* --- ЗАМЕТКИ --- */
+.notes-layout { display: flex; gap: 24px; height: calc(100vh - 80px); }
+.notes-sidebar { 
+    width: 250px; flex-shrink: 0; padding: 16px; height: fit-content;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
 }
+.notes-sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.notes-sidebar-header h2 { font-size: 16px; margin: 0; }
+.folder-list { display: flex; flex-direction: column; gap: 4px; }
+.folder-item { padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--text); font-size: 14px; }
+.folder-item:hover, .folder-item.active { background: var(--bg); color: var(--accent); }
+.trash-link { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+.notes-main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.notes-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.notes-topbar h1 { margin: 0; }
+.search-form input { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; background: var(--card-bg); color: var(--text); font-family: inherit; }
+.notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.note-card { display: flex; flex-direction: column; }
+.note-card:hover { border-color: var(--accent); }
+.note-card-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.note-title { font-weight: 600; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note-preview { font-size: 13px; color: var(--text-muted); line-height: 1.4; flex: 1; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.note-date { font-size: 11px; color: var(--text-muted); }
+
+/* Редактор заметок */
+.note-edit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.note-edit-actions { display: flex; align-items: center; gap: 8px; }
+.note-title-input { width: 100%; font-size: 32px; font-weight: 700; border: none; outline: none; background: transparent; color: var(--text); margin-bottom: 16px; font-family: inherit; }
+#editor-container { background: var(--card-bg); min-height: 400px; font-size: 16px; border-radius: var(--radius); border: 1px solid var(--border); }
+.ql-toolbar { border-radius: var(--radius) var(--radius) 0 0 !important; background: var(--card-bg); border-color: var(--border) !important; }
+.ql-container { border-color: var(--border) !important; border-radius: 0 0 var(--radius) var(--radius) !important; font-family: inherit !important; color: var(--text); }
+.ql-editor { color: var(--text); } /* Белый текст в редакторе */
+
+/* --- КАЛЕНДАРЬ --- */
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.calendar-nav { display: flex; gap: 8px; }
+.btn-nav { padding: 8px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 14px; font-weight: 500; }
+.btn-nav:hover { border-color: var(--accent); color: var(--accent); }
+.calendar-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.legend-settings { margin-left: auto; color: var(--text-muted); text-decoration: none; font-size: 13px; }
+.legend-settings:hover { color: var(--accent); }
+
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 32px; }
+.weekday { text-align: center; font-size: 12px; font-weight: 600; color: var(--text-muted); padding: 8px 0; text-transform: uppercase; }
+.day { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; min-height: 90px; padding: 6px; font-size: 12px; }
+.day.empty-day { background: transparent; border: none; }
+.day.today { border-color: var(--accent); border-width: 2px; }
+.day-number { font-weight: 600; margin-bottom: 4px; font-size: 13px; }
+.day-events { display: flex; flex-direction: column; gap: 2px; }
+.day-event { color: white; font-size: 10px; padding: 2px 4px; border-radius: 4px; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.calendar-add { margin-top: 32px; }
+.calendar-add h2 { font-size: 18px; margin-bottom: 12px; }
+.calendar-form { flex-wrap: wrap; }
+
+/* Вид Год */
+.year-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.mini-month { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-decoration: none; color: var(--text); transition: all 0.2s; }
+.mini-month:hover { border-color: var(--accent); }
+.mini-month-title { font-weight: 600; font-size: 14px; margin-bottom: 8px; text-align: center; color: var(--accent); }
+.mini-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.mini-weekday { text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 600; }
+.mini-day { text-align: center; font-size: 11px; padding: 3px 0; border-radius: 4px; color: var(--text); }
+.mini-day.empty { visibility: hidden; }
+.mini-day.has-event { background: var(--accent); color: white; font-weight: 600; }
+.mini-day.today { outline: 2px solid var(--accent); }
+
+/* Страница события */
+.event-detail { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; position: relative; max-width: 700px; }
+.event-category-bar { position: absolute; top: 0; left: 0; right: 0; height: 6px; border-radius: var(--radius) var(--radius) 0 0; }
+.event-detail h1 { margin-top: 12px; margin-bottom: 20px; }
+.event-meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.event-meta-item { font-size: 14px; }
+.event-meta-label { color: var(--text-muted); margin-right: 8px; }
+.event-description { font-size: 15px; line-height: 1.6; margin-bottom: 24px; white-space: pre-wrap; }
+.btn-danger { padding: 12px 24px; background: #E53935; color: white; border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+/* --- ПОДПИСКИ --- */
+.subs-layout { display: flex; gap: 24px; }
+.subs-sidebar { width: 250px; flex-shrink: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; height: fit-content; }
 .subs-main { flex: 1; }
 .subs-stats { display: flex; gap: 16px; margin-bottom: 24px; }
-.stat-box {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    padding: 16px 24px; border-radius: var(--radius); flex: 1;
-}
+.stat-box { background: var(--card-bg); border: 1px solid var(--border); padding: 16px 24px; border-radius: var(--radius); flex: 1; }
 .stat-label { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
 .stat-value { font-size: 28px; font-weight: 700; color: var(--accent); }
 .subs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
-/* Карточка подписки */
-.sub-card { padding: 16px; }
+.sub-card { display: flex; flex-direction: column; }
 .sub-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.sub-icon {
-    font-size: 24px; background: var(--bg);
-    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px;
-}
+.sub-icon { font-size: 24px; background: var(--bg); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
 .sub-title { font-weight: 600; font-size: 16px; }
 .sub-price { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
 .sub-period { font-size: 14px; font-weight: 400; color: var(--text-muted); }
-.sub-date {
-    font-size: 13px; color: var(--text-muted);
-    background: var(--bg); padding: 6px 10px; border-radius: 6px; display: inline-block;
-}
+.sub-date { font-size: 13px; color: var(--text-muted); background: var(--bg); padding: 6px 10px; border-radius: 6px; display: inline-block; width: fit-content; }
 .sub-date-urgent { background: #331111; color: #ff4444; font-weight: 600; }
