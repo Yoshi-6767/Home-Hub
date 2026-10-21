@@ -35,9 +35,10 @@ login_manager.login_view = 'login'
 # --- Модели ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False) # Почта для входа
+    nickname = db.Column(db.String(50), nullable=False)              # НОВОЕ: Ник для отображения
     password_hash = db.Column(db.String(200), nullable=False)
-
+    
 class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -146,12 +147,14 @@ def register():
         return redirect(url_for('index'))
     if request.method == 'POST':
         username = request.form.get('username')
+        nickname = request.form.get('nickname')
         password = request.form.get('password')
+        
         if User.query.filter_by(username=username).first():
-            flash('Такое имя уже занято', 'error')
+            flash('Эта почта уже занята', 'error')
         else:
             hashed = generate_password_hash(password)
-            new_user = User(username=username, password_hash=hashed)
+            new_user = User(username=username, nickname=nickname, password_hash=hashed)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
