@@ -4,27 +4,27 @@
     <meta charset="UTF-8">
     <title>Регистрация — Home Hub</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body style="display: flex; align-items: center; justify-content: center; height: 100vh;">
-    <div style="background: var(--card-bg); padding: 40px; border-radius: var(--radius); border: 1px solid var(--border); width: 100%; max-width: 400px;">
-        <h1 style="text-align: center; margin-bottom: 24px; color: var(--accent);">Создать аккаунт</h1>
+    <div style="background: var(--card-bg); padding: 40px; border-radius: var(--radius); border: 1px solid var(--border); width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <h1 style="text-align: center; margin-bottom: 24px; color: var(--accent); font-weight: 900;">Home Hub</h1>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
-              <div style="background: #331111; color: #ff4444; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">{{ message }}</div>
+              <div style="background: #331111; color: #ff4444; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; border: 1px solid #551111;">{{ message }}</div>
             {% endfor %}
           {% endif %}
         {% endwith %}
 
         <form method="POST" style="display: flex; flex-direction: column; gap: 16px;">
-            <input type="text" name="username" placeholder="Придумай логин" required style="padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit;">
-            <input type="password" name="password" placeholder="Придумай пароль" required style="padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit;">
-            <button type="submit" class="btn-primary" style="width: 100%;">Зарегистрироваться</button>
+            <input type="text" name="nickname" placeholder="Твой ник (например, Вова)" required style="padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: #111; color: var(--text); font-family: inherit;">
+            <input type="email" name="username" placeholder="Email (для входа)" required style="padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: #111; color: var(--text); font-family: inherit;">
+            <input type="password" name="password" placeholder="Пароль" required style="padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: #111; color: var(--text); font-family: inherit;">
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; font-size: 16px;">Создать аккаунт</button>
         </form>
         
-        <div style="text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-muted);">
+        <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted);">
             Уже есть аккаунт? <a href="/login" style="color: var(--accent); text-decoration: none;">Войти</a>
         </div>
     </div>
