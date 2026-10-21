@@ -5,40 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Hub</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <!-- Шапка сверху (как у Порнхаба) -->
+    <header class="top-header">
+        <div class="header-left">
+            <!-- Логотип: Home белое, Hub в оранжевом квадрате -->
+            <a href="/" class="logo-link">
+                <span class="logo-white">Home</span><span class="logo-orange">Hub</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <span style="color: var(--text-muted); font-size: 14px;">Вошёл как <strong>{{ current_user.username }}</strong></span>
+            <a href="/logout" class="btn-logout">Выйти</a>
+        </div>
+    </header>
+
     <div class="layout">
-        <!-- Левая панель с меню -->
+        <!-- Меню слева -->
         <aside class="sidebar">
-            <div class="logo">
-                Home Hub
+            <!-- Профиль над меню -->
+            <div class="profile-block">
+                <div class="avatar">{{ current_user.username[0]|upper }}</div>
+                <div class="profile-info">
+                    <div class="profile-name">{{ current_user.username }}</div>
+                    <div class="profile-status">В сети</div>
+                </div>
             </div>
-            
-            <nav style="flex: 1;">
-                <a href="/" class="nav-item">🏠 Главная</a>
-                <a href="/shopping" class="nav-item">📋 Покупки</a>
-                <a href="/wishes" class="nav-item">🎁 Желания</a>
-                <a href="/calendar" class="nav-item">📅 Календарь</a>
-                <a href="/notes" class="nav-item">📝 Заметки</a>
-                <a href="/subscriptions" class="nav-item">💳 Подписки</a>
-                <a href="/recipes" class="nav-item">🍳 Рецепты</a>
+
+            <nav class="nav-menu">
+                <a href="/" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">Главная</span>
+                </a>
+                <a href="/shopping" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">Покупки</span>
+                </a>
+                <a href="/wishes" class="nav-item">
+                    <span class="nav-icon">🎁</span>
+                    <span class="nav-text">Желания</span>
+                </a>
+                <a href="/calendar" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-text">Календарь</span>
+                </a>
+                <a href="/notes" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">Заметки</span>
+                </a>
+                <a href="/subscriptions" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span class="nav-text">Подписки</span>
+                </a>
+                <a href="/recipes" class="nav-item">
+                    <span class="nav-icon">🍳</span>
+                    <span class="nav-text">Рецепты</span>
+                </a>
             </nav>
         </aside>
 
-            <div style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 16px;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
-                            {{ current_user.username[0]|upper }}
-                        </div>
-                        <div style="font-weight: 500; font-size: 14px;">{{ current_user.username }}</div>
-                    </div>
-                    <a href="/logout" class="btn-delete" title="Выйти" style="text-decoration: none;">Выйти</a>
-                </div>
-            </div>
-        
-        <!-- Основная рабочая область (сюда загружаются страницы) -->
+        <!-- Основная рабочая область -->
         <main class="content">
             {% block content %}{% endblock %}
         </main>
