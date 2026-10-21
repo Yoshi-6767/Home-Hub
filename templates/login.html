@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход — Home Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+    <div style="background: var(--card-bg); padding: 40px; border-radius: var(--radius); border: 1px solid var(--border); width: 100%; max-width: 400px;">
+        <h1 style="text-align: center; margin-bottom: 24px; color: var(--accent);">Home Hub</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div style="background: #331111; color: #ff4444; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" style="display: flex; flex-direction: column; gap: 16px;">
+            <input type="text" name="username" placeholder="Логин" required style="padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit;">
+            <input type="password" name="password" placeholder="Пароль" required style="padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit;">
+            <button type="submit" class="btn-primary" style="width: 100%;">Войти</button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-muted);">
+            Нет аккаунта? <a href="/register" style="color: var(--accent); text-decoration: none;">Создать</a>
+        </div>
+    </div>
+</body>
+</html>
