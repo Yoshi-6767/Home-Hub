@@ -447,19 +447,16 @@ def uploaded_file(filename):
 def recipes():
     return render_template('recipes.html')
 
-# Временный маршрут для сброса базы (удали его после использования!)
-@app.route('/reset-db-for-auth')
-def reset_db_for_auth():
-    db.drop_all()
-    db.create_all()
-    return "База сброшена! Авторизация готова."
-
-@app.route('/reset-db-for-auth')
-def reset_db():
-    db.drop_all()
-    db.create_all()
-    return "БАЗА УСПЕШНО СБРОШЕНА! Иди регистрируйся."
-
+@app.route('/fix-db-column')
+def fix_db_column():
+    from sqlalchemy import text
+    try:
+        db.session.execute(text("ALTER TABLE user ADD COLUMN nickname VARCHAR(50) DEFAULT 'User'"))
+        db.session.commit()
+        return "Колонка nickname успешно добавлена в базу!"
+    except Exception as e:
+        return f"Ошибка: {e}"
+        
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
