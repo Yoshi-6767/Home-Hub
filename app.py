@@ -454,6 +454,12 @@ def reset_db_for_auth():
     db.create_all()
     return "База сброшена! Авторизация готова."
 
+@app.route('/reset-db-for-nick')
+def reset_db_nick():
+    db.drop_all()
+    db.create_all()
+    return "База обновлена. Можно регистрироваться!"
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
