@@ -9,16 +9,16 @@
 </head>
 <body>
 
-    <!-- Шапка сверху (как у Порнхаба) -->
+    <!-- Шапка сверху -->
     <header class="top-header">
         <div class="header-left">
-            <!-- Логотип: Home белое, Hub в оранжевом квадрате -->
             <a href="/" class="logo-link">
                 <span class="logo-white">Home</span><span class="logo-orange">Hub</span>
             </a>
         </div>
         <div class="header-right">
-            <span style="color: var(--text-muted); font-size: 14px;">Вошёл как <strong>{{ current_user.username }}</strong></span>
+            <!-- Выводим НИК -->
+            <span style="color: var(--text-muted); font-size: 14px;">Вошёл как <strong>{{ current_user.nickname }}</strong></span>
             <a href="/logout" class="btn-logout">Выйти</a>
         </div>
     </header>
@@ -28,46 +28,25 @@
         <aside class="sidebar">
             <!-- Профиль над меню -->
             <div class="profile-block">
-                <div class="avatar">{{ current_user.username[0]|upper }}</div>
+                <!-- Выводим первую букву НИКА -->
+                <div class="avatar">{{ current_user.nickname[0]|upper }}</div>
                 <div class="profile-info">
-                    <div class="profile-name">{{ current_user.username }}</div>
+                    <div class="profile-name" title="{{ current_user.nickname }}">{{ current_user.nickname }}</div>
                     <div class="profile-status">В сети</div>
                 </div>
             </div>
 
             <nav class="nav-menu">
-                <a href="/" class="nav-item">
-                    <span class="nav-icon">🏠</span>
-                    <span class="nav-text">Главная</span>
-                </a>
-                <a href="/shopping" class="nav-item">
-                    <span class="nav-icon">📋</span>
-                    <span class="nav-text">Покупки</span>
-                </a>
-                <a href="/wishes" class="nav-item">
-                    <span class="nav-icon">🎁</span>
-                    <span class="nav-text">Желания</span>
-                </a>
-                <a href="/calendar" class="nav-item">
-                    <span class="nav-icon">📅</span>
-                    <span class="nav-text">Календарь</span>
-                </a>
-                <a href="/notes" class="nav-item">
-                    <span class="nav-icon">📝</span>
-                    <span class="nav-text">Заметки</span>
-                </a>
-                <a href="/subscriptions" class="nav-item">
-                    <span class="nav-icon">💳</span>
-                    <span class="nav-text">Подписки</span>
-                </a>
-                <a href="/recipes" class="nav-item">
-                    <span class="nav-icon">🍳</span>
-                    <span class="nav-text">Рецепты</span>
-                </a>
+                <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-text">Главная</span></a>
+                <a href="/shopping" class="nav-item"><span class="nav-icon">📋</span><span class="nav-text">Покупки</span></a>
+                <a href="/wishes" class="nav-item"><span class="nav-icon">🎁</span><span class="nav-text">Желания</span></a>
+                <a href="/calendar" class="nav-item"><span class="nav-icon">📅</span><span class="nav-text">Календарь</span></a>
+                <a href="/notes" class="nav-item"><span class="nav-icon">📝</span><span class="nav-text">Заметки</span></a>
+                <a href="/subscriptions" class="nav-item"><span class="nav-icon">💳</span><span class="nav-text">Подписки</span></a>
+                <a href="/recipes" class="nav-item"><span class="nav-icon">🍳</span><span class="nav-text">Рецепты</span></a>
             </nav>
         </aside>
 
-        <!-- Основная рабочая область -->
         <main class="content">
             {% block content %}{% endblock %}
         </main>
