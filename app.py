@@ -460,3 +460,7 @@ def fix_db_column():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
+    with app.app_context():
+    from sqlalchemy import text
+    db.session.execute(text("ALTER TABLE user ADD COLUMN nickname VARCHAR(50) DEFAULT 'User'"))
+    db.session.commit()
