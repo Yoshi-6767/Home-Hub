@@ -26,6 +26,18 @@
             </nav>
         </aside>
 
+            <div style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                            {{ current_user.username[0]|upper }}
+                        </div>
+                        <div style="font-weight: 500; font-size: 14px;">{{ current_user.username }}</div>
+                    </div>
+                    <a href="/logout" class="btn-delete" title="Выйти" style="text-decoration: none;">Выйти</a>
+                </div>
+            </div>
+        
         <!-- Основная рабочая область (сюда загружаются страницы) -->
         <main class="content">
             {% block content %}{% endblock %}
