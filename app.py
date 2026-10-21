@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import text
 
 # --- Пути ---
 if platform.system() == 'Windows':
@@ -21,7 +22,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # --- Приложение ---
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'super-secret-home-hub-key' # Нужен для куки авторизации
+app.config['SECRET_KEY'] = 'super-secret-home-hub-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -35,10 +36,10 @@ login_manager.login_view = 'login'
 # --- Модели ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False) # Почта для входа
-    nickname = db.Column(db.String(50), nullable=False)              # НОВОЕ: Ник для отображения
+    username = db.Column(db.String(50), unique=True, nullable=False) # Почта
+    nickname = db.Column(db.String(50), nullable=True)               # Ник (разрешаем NULL для старых баз)
     password_hash = db.Column(db.String(200), nullable=False)
-    
+
 class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -120,10 +121,20 @@ class Subscription(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    try:
+        return User.query.get(int(user_id))
+    except Exception:
+        return None
 
 with app.app_context():
+    # 1. Создаем таблицы, если их нет
     db.create_all()
+    # 2. Хитрый фикс для добавления колонки nickname в старую базу
+    try:
+        db.session.execute(text("ALTER TABLE user ADD COLUMN nickname VARCHAR(50) DEFAULT 'User'"))
+        db.session.commit()
+    except Exception:
+        pass # Если колонка уже есть - ничего не делаем
 
 # --- АВТОРИЗАЦИЯ ---
 @app.route('/login', methods=['GET', 'POST'])
@@ -166,7 +177,6 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('login'))
-
 
 # --- ГЛАВНАЯ ---
 @app.route('/')
@@ -447,20 +457,6 @@ def uploaded_file(filename):
 def recipes():
     return render_template('recipes.html')
 
-@app.route('/fix-db-column')
-def fix_db_column():
-    from sqlalchemy import text
-    try:
-        db.session.execute(text("ALTER TABLE user ADD COLUMN nickname VARCHAR(50) DEFAULT 'User'"))
-        db.session.commit()
-        return "Колонка nickname успешно добавлена в базу!"
-    except Exception as e:
-        return f"Ошибка: {e}"
-        
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
-    with app.app_context():
-    from sqlalchemy import text
-    db.session.execute(text("ALTER TABLE user ADD COLUMN nickname VARCHAR(50) DEFAULT 'User'"))
-    db.session.commit()
