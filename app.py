@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import text
 
 # --- Пути ---
 if platform.system() == 'Windows':
@@ -36,8 +35,8 @@ login_manager.login_view = 'login'
 # --- Модели ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False) # Почта
-    nickname = db.Column(db.String(50), nullable=True)               # Ник (разрешаем NULL для старых баз)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    nickname = db.Column(db.String(50), nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
 
 class ShoppingList(db.Model):
@@ -118,7 +117,6 @@ class Subscription(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-
 @login_manager.user_loader
 def load_user(user_id):
     try:
@@ -126,15 +124,10 @@ def load_user(user_id):
     except Exception:
         return None
 
+# Пересоздаем базу с нуля, чтобы избежать любых ошибок с колонками
 with app.app_context():
-    # 1. Создаем таблицы, если их нет
+    db.drop_all()
     db.create_all()
-    # 2. Хитрый фикс для добавления колонки nickname в старую базу
-    try:
-        db.session.execute(text("ALTER TABLE user ADD COLUMN nickname VARCHAR(50) DEFAULT 'User'"))
-        db.session.commit()
-    except Exception:
-        pass # Если колонка уже есть - ничего не делаем
 
 # --- АВТОРИЗАЦИЯ ---
 @app.route('/login', methods=['GET', 'POST'])
