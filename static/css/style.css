@@ -277,3 +277,268 @@ h1 {
 .ql-snow .ql-stroke { stroke: var(--text-muted); }
 .ql-snow .ql-picker { color: var(--text-muted); }
 .ql-snow .ql-picker-options { background: var(--card-bg) !important; border-color: var(--border) !important; }
+
+:root {
+    --bg: #121212;              
+    --sidebar-bg: #181818;      
+    --card-bg: #222222;         
+    --text: #ffffff;            
+    --text-muted: #888888;      
+    --border: #333333;          
+    
+    --accent: #FF6B00;          
+    --accent-hover: #e65c00;
+    
+    --radius: 8px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    /* Тот самый перелив оранжевого в черный */
+    background: radial-gradient(circle at top left, #3a1c0b 0%, #121212 50%, #000000 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* --- ШАПКА СВЕРХУ --- */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(10px); /* Эффект стекла */
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo-link {
+    text-decoration: none;
+    font-size: 26px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.5px;
+}
+
+/* Логотип как ты просил */
+.logo-white {
+    color: #ffffff;
+}
+
+.logo-orange {
+    background: var(--accent);
+    color: #000000;
+    padding: 0 6px;
+    border-radius: 4px;
+    margin-left: 2px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-logout {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.btn-logout:hover {
+    background: var(--card-bg);
+    color: var(--text);
+}
+
+/* --- МАКЕТ --- */
+.layout {
+    display: flex;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 24px;
+    gap: 24px;
+    min-height: calc(100vh - 70px);
+}
+
+/* --- МЕНЮ СЛЕВА --- */
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Блок профиля над меню */
+.profile-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.profile-status {
+    font-size: 12px;
+    color: #00b894; /* Зеленая точка типа "онлайн" */
+}
+
+/* Кнопки меню блоками */
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.nav-item:hover {
+    background: #2a2a2a;
+    border-color: #444;
+}
+
+.nav-icon {
+    font-size: 18px;
+}
+
+/* --- КОНТЕНТ --- */
+.content {
+    flex: 1;
+    min-width: 0; /* Чтобы не вылезало за края */
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin-bottom: 32px;
+}
+
+/* --- СЕТКА КАРТОЧЕК (ГЛАВНАЯ) --- */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.card {
+    background: rgba(34, 34, 34, 0.6); /* Полупрозрачный фон */
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-decoration: none;
+    color: var(--text);
+    transition: 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    background: var(--card-bg);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.card-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.card-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* --- КНОПКИ И ФОРМЫ (для остальных страниц) --- */
+.btn-primary {
+    padding: 10px 20px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.add-form input, .add-form select {
+    padding: 12px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    outline: none;
+}
+
+.add-form input:focus, .add-form select:focus {
+    border-color: var(--accent);
+}
