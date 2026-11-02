@@ -215,3 +215,35 @@ h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
     display: none !important;
     content: none !important;
 }
+
+/* --- Логотип в стиле iOS --- */
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Расстояние между иконкой и текстом */
+}
+
+.logo-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    background-color: #1e1e1e; /* Тёмный фон квадратика */
+    border-radius: 10px; /* Скругление как в iOS */
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Обрезаем всё, что вылезает за края */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.logo-icon-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Картинка вписывается, не искажаясь */
+}
+
+.logo-text-img {
+    height: 32px; /* Высота надписи */
+    transform: scale(1.2); /* Увеличиваем надпись на 20% */
+    transform-origin: left center; /* Тянем вправо */
+}
