@@ -138,53 +138,59 @@ body {
 .content { flex: 1; min-width: 0; }
 h1 { font-size: 32px; font-weight: 700; margin-bottom: 32px; }
 
-/* --- СЕТКА КАРТОЧЕК (Красивая) --- */
+/* --- СЕТКА КАРТОЧЕК (Стильные строки) --- */
 .cards {
-    display: grid;
-    /* Сделали плитки более крупными */
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-direction: column; /* Выстраиваем в столбик */
+    gap: 12px; /* Отступ между строками */
+    margin-top: 24px;
+    max-width: 800px; /* Чтобы карточки не растягивались на весь экран */
 }
 
 .card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 32px;
+    padding: 20px 24px;
     text-decoration: none;
     color: var(--text);
     backdrop-filter: blur(10px);
-    transition: 0.3s;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-}
-
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(45deg, transparent, rgba(229, 57, 53, 0.05));
-    opacity: 0;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 .card:hover {
+    background: rgba(40, 40, 40, 0.9);
     border-color: var(--accent);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transform: translateX(8px); /* При наведении карточка сдвигается вправо */
+    box-shadow: -4px 4px 20px rgba(229, 57, 53, 0.15); /* Красная тень слева */
 }
-
-.card:hover::before { opacity: 1; }
 
 .card-icon { 
-    font-size: 40px; 
-    color: var(--accent); /* Красные иконки */
-    margin-bottom: 20px; 
+    font-size: 28px; 
+    color: var(--accent); 
+    background: rgba(229, 57, 53, 0.1); /* Красный полупрозрачный фон для иконки */
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
-.card-title { font-weight: 600; font-size: 20px; margin-bottom: 8px; }
-.card-desc { color: var(--text-muted); font-size: 14px; }
+
+.card-title { 
+    font-weight: 600; 
+    font-size: 18px; 
+    margin-bottom: 4px; 
+}
+
+.card-desc { 
+    color: var(--text-muted); 
+    font-size: 14px; 
+}
 
 /* --- ФУТЕР --- */
 .footer {
