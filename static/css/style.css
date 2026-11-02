@@ -243,7 +243,8 @@ h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
 }
 
 .logo-text-img {
-    height: 32px; /* Высота надписи */
-    transform: scale(1.2); /* Увеличиваем надпись на 20% */
-    transform-origin: left center; /* Тянем вправо */
+    height: 42px; /* Увеличили высоту надписи */
+    transform: scale(1.3); /* Сделали еще больше */
+    transform-origin: left center;
+    margin-left: 20px; /* Отодвинули вправо от иконки TH */
 }
