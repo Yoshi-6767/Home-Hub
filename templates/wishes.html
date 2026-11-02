@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>🎁 Желания</h1>
+<h1><i class="ph ph-gift" style="color: var(--accent);"></i> Желания</h1>
 
 <div class="wishes-total">
     <div class="total-label">Сумма невыполненных</div>
@@ -10,7 +10,7 @@
 
 <form method="POST" action="/wishes/add" class="add-form wishes-form">
     <input type="text" name="name" placeholder="Что хочу" required>
-    <input type="text" name="link" placeholder="Ссылка (необязательно)">
+    <input type="text" name="link" placeholder="Ссылка">
     <input type="number" name="price" placeholder="Цена" class="input-small" step="1">
     <select name="priority" class="input-small">
         <option value="normal">Обычное</option>
@@ -25,10 +25,10 @@
     {% for w in wishes if not w.done %}
     <div class="wish priority-{{ w.priority }}">
         <div class="wish-priority">
-            {% if w.priority == 'urgent' %}🔴
-            {% elif w.priority == 'dream' %}🟡
-            {% elif w.priority == 'gift' %}🟢
-            {% else %}⚪{% endif %}
+            {% if w.priority == 'urgent' %}<i class="ph ph-warning-circle" style="color:#E53935"></i>
+            {% elif w.priority == 'dream' %}<i class="ph ph-star" style="color:#FFC107"></i>
+            {% elif w.priority == 'gift' %}<i class="ph ph-gift" style="color:#43A047"></i>
+            {% else %}<i class="ph ph-circle"></i>{% endif %}
         </div>
         <div class="wish-body">
             <div class="wish-name">{{ w.name }}</div>
@@ -41,7 +41,7 @@
             <button type="submit" class="checkbox"></button>
         </form>
         <form method="POST" action="/wishes/delete/{{ w.id }}" class="delete-form">
-            <button type="submit" class="btn-delete" onclick="return confirm('Удалить?')">✕</button>
+            <button type="submit" class="btn-delete" onclick="return confirm('Удалить?')"><i class="ph ph-trash"></i></button>
         </form>
     </div>
     {% endfor %}
@@ -53,28 +53,21 @@
         {% for w in done_wishes %}
         <div class="wish wish-done">
             <div class="wish-priority">
-                {% if w.priority == 'urgent' %}🔴
-                {% elif w.priority == 'dream' %}🟡
-                {% elif w.priority == 'gift' %}🟢
-                {% else %}⚪{% endif %}
+                <i class="ph ph-check" style="color:var(--accent)"></i>
             </div>
             <div class="wish-body">
                 <div class="wish-name">{{ w.name }}</div>
             </div>
             <div class="wish-price">{{ "%.0f"|format(w.price) }} ₽</div>
             <form method="POST" action="/wishes/toggle/{{ w.id }}" class="toggle-form">
-                <button type="submit" class="checkbox checked">✓</button>
+                <button type="submit" class="checkbox checked"><i class="ph ph-check"></i></button>
             </form>
             <form method="POST" action="/wishes/delete/{{ w.id }}" class="delete-form">
-                <button type="submit" class="btn-delete">✕</button>
+                <button type="submit" class="btn-delete"><i class="ph ph-trash"></i></button>
             </form>
         </div>
         {% endfor %}
     </div>
-    {% endif %}
-
-    {% if not wishes %}
-    <p class="empty">Пока пусто. Добавь первое желание!</p>
     {% endif %}
 </div>
 {% endblock %}
