@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>📋 Покупки</h1>
+<h1><i class="ph ph-shopping-cart" style="color: var(--accent);"></i> Покупки</h1>
 <p class="subtitle">Твои списки покупок</p>
 
 <form method="POST" action="/shopping/create" class="add-form">
-    <input type="text" name="name" placeholder="Название списка" required>
+    <input type="text" name="name" placeholder="Название нового списка" required>
     <button type="submit" class="btn-primary">Создать</button>
 </form>
 
@@ -19,7 +19,7 @@
             </div>
         </a>
         <form method="POST" action="/shopping/{{ lst.id }}/delete" class="delete-form">
-            <button type="submit" class="btn-delete" onclick="return confirm('Удалить список?')">✕</button>
+            <button type="submit" class="btn-delete" onclick="return confirm('Удалить список?')"><i class="ph ph-trash"></i></button>
         </form>
     </div>
     {% else %}
