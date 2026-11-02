@@ -1,7 +1,7 @@
 <{% extends "base.html" %}
 
 {% block content %}
-<h1>Привет, Вова!</h1>
+<h1>Привет, {{ current_user.display_name }}!</h1>
 <p class="subtitle">Это твой домашний хаб. Пока тут пусто, но скоро будет.</p>
 
 <div class="cards">
