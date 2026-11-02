@@ -548,3 +548,10 @@ h1 {
     display: none !important;
     content: "" !important;
 }
+
+html {
+    scrollbar-gutter: stable;
+}
+body {
+    overflow-x: hidden;
+}
