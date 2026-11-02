@@ -1,7 +1,7 @@
 :root {
     --bg: #121212;              
-    --sidebar-bg: #181818;      
-    --card-bg: #1e1e1e;         
+    --sidebar-bg: rgba(24, 24, 24, 0.9); /* Полупрозрачный сайдбар */
+    --card-bg: rgba(30, 30, 30, 0.85);   /* Полупрозрачные карточки */
     --text: #ffffff;            
     --text-muted: #9e9e9e;      
     --border: #2a2a2a;          
@@ -20,21 +20,24 @@
 }
 
 body {
-    background-color: var(--bg); /* Темный фон */
-    background-image: radial-gradient(circle at top left, #2a0505 0%, #121212 50%, #000000 100%); /* Красный перелив */
+    background-color: var(--bg);
+    /* Твой фон + затемнение */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.85)), url('/static/bg.jpg');
+    background-size: cover;
+    background-position: center;
     background-attachment: fixed;
     color: var(--text);
     line-height: 1.5;
     min-height: 100vh;
 }
 
-/* --- ШАПКА --- */
+/* --- ШАПКА СВЕРХУ --- */
 .top-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 24px;
-    background: rgba(18, 18, 18, 0.9);
+    background: rgba(18, 18, 18, 0.8);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
     position: sticky;
@@ -43,9 +46,39 @@ body {
 }
 
 .logo-link {
-    text-decoration: none;
     display: flex;
     align-items: center;
+    gap: 16px; /* Расстояние между иконкой и текстом */
+    text-decoration: none;
+}
+
+/* Иконка TH в стиле iOS (стекло) */
+.logo-icon-wrapper {
+    width: 46px;
+    height: 46px;
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.logo-icon-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Текст логотипа */
+.logo-text-img {
+    height: 42px;
+    transform: scale(1.3);
+    transform-origin: left center;
+    margin-left: 20px;
 }
 
 .header-right {
@@ -95,6 +128,7 @@ body {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
+    backdrop-filter: blur(10px);
     transition: 0.2s;
 }
 
@@ -136,21 +170,23 @@ body {
     text-decoration: none;
     font-weight: 500;
     font-size: 14px;
+    backdrop-filter: blur(10px);
     transition: 0.2s;
 }
 
 .nav-item:hover {
-    background: #2a0a0a;
+    background: rgba(229, 57, 53, 0.15); /* Красноватый оттенок при наведении */
     border-color: var(--accent);
     color: var(--accent);
+    transform: translateX(4px);
 }
 
 .nav-icon { font-size: 18px; }
 
 /* --- КОНТЕНТ --- */
 .content { flex: 1; min-width: 0; }
-h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-.subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; }
+h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
 /* --- СЕТКА КАРТОЧЕК --- */
 .cards {
@@ -166,6 +202,7 @@ h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
     padding: 24px;
     text-decoration: none;
     color: var(--text);
+    backdrop-filter: blur(10px);
     transition: 0.2s;
     display: flex;
     flex-direction: column;
@@ -173,8 +210,8 @@ h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
 
 .card:hover {
     border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(229, 57, 53, 0.2);
 }
 
 .card-icon { font-size: 32px; margin-bottom: 16px; }
@@ -214,37 +251,4 @@ h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
 .sidebar::before, .sidebar::after, .layout::before {
     display: none !important;
     content: none !important;
-}
-
-/* --- Логотип в стиле iOS --- */
-.logo-link {
-    display: flex;
-    align-items: center;
-    gap: 16px; /* Расстояние между иконкой и текстом */
-}
-
-.logo-icon-wrapper {
-    width: 44px;
-    height: 44px;
-    background-color: #1e1e1e; /* Тёмный фон квадратика */
-    border-radius: 10px; /* Скругление как в iOS */
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Обрезаем всё, что вылезает за края */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-
-.logo-icon-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Картинка вписывается, не искажаясь */
-}
-
-.logo-text-img {
-    height: 42px; /* Увеличили высоту надписи */
-    transform: scale(1.3); /* Сделали еще больше */
-    transform-origin: left center;
-    margin-left: 20px; /* Отодвинули вправо от иконки TH */
 }
