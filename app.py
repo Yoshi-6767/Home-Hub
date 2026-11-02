@@ -21,7 +21,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # --- Приложение ---
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'super-secret-home-hub-key'
+app.config['SECRET_KEY'] = 'super-secret-tabibito-hub-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -35,9 +35,11 @@ login_manager.login_view = 'login'
 # --- Модели ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    nickname = db.Column(db.String(50), nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False) # Логин/Почта
+    display_name = db.Column(db.String(50), nullable=False)          # Отображаемое имя
+    nickname = db.Column(db.String(50), nullable=True)               # Ник (для друзей, не меняется)
     password_hash = db.Column(db.String(200), nullable=False)
+    avatar = db.Column(db.String(200), default='default.png')        # Аватарка
 
 class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -124,7 +126,7 @@ def load_user(user_id):
     except Exception:
         return None
 
-# Пересоздаем базу с нуля, чтобы избежать любых ошибок с колонками
+# ВНИМАНИЕ: ПЕРЕСОЗДАЕМ БАЗУ (удали старые тестовые данные)
 with app.app_context():
     db.drop_all()
     db.create_all()
@@ -151,14 +153,17 @@ def register():
         return redirect(url_for('index'))
     if request.method == 'POST':
         username = request.form.get('username')
+        display_name = request.form.get('display_name')
         nickname = request.form.get('nickname')
         password = request.form.get('password')
         
         if User.query.filter_by(username=username).first():
             flash('Эта почта уже занята', 'error')
+        elif User.query.filter_by(nickname=nickname).first():
+            flash('Этот ник уже занят', 'error')
         else:
             hashed = generate_password_hash(password)
-            new_user = User(username=username, nickname=nickname, password_hash=hashed)
+            new_user = User(username=username, display_name=display_name, nickname=nickname, password_hash=hashed)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
@@ -170,6 +175,47 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+# --- ПРОФИЛЬ ---
+@app.route('/profile')
+@login_required
+def profile():
+    # Статистика
+    purchases_count = ShoppingItem.query.join(ShoppingList).filter(ShoppingList.user_id == current_user.id, ShoppingItem.done == True).count()
+    notes_count = Note.query.filter_by(user_id=current_user.id, deleted=False).count()
+    events_count = Event.query.filter_by(user_id=current_user.id).count()
+    active_subs = Subscription.query.filter_by(user_id=current_user.id).all()
+    subs_sum = sum(sub.price for sub in active_subs if sub.period == 'monthly')
+    
+    return render_template('profile.html', 
+                           purchases_count=purchases_count,
+                           notes_count=notes_count,
+                           events_count=events_count,
+                           subs_sum=subs_sum)
+
+@app.route('/profile/update', methods=['POST'])
+@login_required
+def profile_update():
+    display_name = request.form.get('display_name', '').strip()
+    if display_name:
+        current_user.display_name = display_name
+        db.session.commit()
+        flash('Имя успешно изменено!', 'success')
+    return redirect(url_for('profile'))
+
+@app.route('/profile/upload-avatar', methods=['POST'])
+@login_required
+def upload_avatar():
+    if 'avatar' not in request.files:
+        return redirect(url_for('profile'))
+    file = request.files['avatar']
+    if file.filename != '':
+        filename = 'avatar_' + str(current_user.id) + '_' + secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        current_user.avatar = filename
+        db.session.commit()
+    return redirect(url_for('profile'))
 
 # --- ГЛАВНАЯ ---
 @app.route('/')
@@ -427,18 +473,6 @@ def sub_add():
             db.session.commit()
         except ValueError: pass
     return redirect(url_for('subscriptions'))
-
-@app.route('/uploads', methods=['POST'])
-@login_required
-def upload_file():
-    if 'image' not in request.files: return jsonify({'error': 'Нет файла'}), 400
-    file = request.files['image']
-    if file.filename == '': return jsonify({'error': 'Пустое имя'}), 400
-    if file:
-        filename = str(uuid.uuid4()) + "_" + secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        return jsonify({'url': f'/uploads/{filename}'})
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
