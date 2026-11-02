@@ -543,15 +543,9 @@ h1 {
     border-color: var(--accent);
 }
 
-/* Убиваем надоедливую стрелку */
-.sidebar::before {
+.sidebar::before, 
+.sidebar::after,
+.layout::before {
     display: none !important;
-    content: "" !important;
-}
-
-html {
-    scrollbar-gutter: stable;
-}
-body {
-    overflow-x: hidden;
+    content: none !important;
 }
