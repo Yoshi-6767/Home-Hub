@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="calendar-header">
-    <h1>📅 {{ month_name }} {{ year }}</h1>
+    <h1><i class="ph ph-calendar" style="color: var(--accent);"></i> {{ month_name }} {{ year }}</h1>
     <div class="calendar-nav">
-        <a href="/calendar?year={{ year }}&month={{ month - 1 }}" class="btn-nav">←</a>
+        <a href="/calendar?year={{ year }}&month={{ month - 1 }}" class="btn-nav"><i class="ph ph-caret-left"></i></a>
         <a href="/calendar" class="btn-nav">Сегодня</a>
-        <a href="/calendar?year={{ year }}&month={{ month + 1 }}" class="btn-nav">→</a>
-        <a href="/calendar/year?year={{ year }}" class="btn-nav">📆 Год</a>
+        <a href="/calendar?year={{ year }}&month={{ month + 1 }}" class="btn-nav"><i class="ph ph-caret-right"></i></a>
+        <a href="/calendar/year?year={{ year }}" class="btn-nav">Год</a>
     </div>
 </div>
 
@@ -18,17 +18,12 @@
         {{ cat.name }}
     </div>
     {% endfor %}
-    <a href="/calendar/categories" class="legend-settings">⚙️ Категории</a>
+    <a href="/calendar/categories" class="legend-settings"><i class="ph ph-gear"></i> Категории</a>
 </div>
 
 <div class="calendar-grid">
-    <div class="weekday">Пн</div>
-    <div class="weekday">Вт</div>
-    <div class="weekday">Ср</div>
-    <div class="weekday">Чт</div>
-    <div class="weekday">Пт</div>
-    <div class="weekday">Сб</div>
-    <div class="weekday">Вс</div>
+    <div class="weekday">Пн</div><div class="weekday">Вт</div><div class="weekday">Ср</div>
+    <div class="weekday">Чт</div><div class="weekday">Пт</div><div class="weekday">Сб</div><div class="weekday">Вс</div>
 
     {% for _ in range(first_weekday) %}
     <div class="day empty-day"></div>
@@ -49,7 +44,7 @@
 </div>
 
 <div class="calendar-add">
-    <h2>Добавить событие</h2>
+    <h2 style="margin-bottom: 16px; font-size: 20px;">Добавить событие</h2>
     <form method="POST" action="/calendar/add-event" class="add-form calendar-form">
         <input type="text" name="title" placeholder="Название события" required>
         <input type="date" name="date" required class="input-small">
@@ -65,7 +60,7 @@
             <option value="monthly">Каждый месяц</option>
             <option value="yearly">Каждый год</option>
         </select>
-        <input type="text" name="description" placeholder="Описание (необязательно)">
+        <input type="text" name="description" placeholder="Описание">
         <button type="submit" class="btn-primary">Добавить</button>
     </form>
 </div>
