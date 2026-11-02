@@ -75,9 +75,8 @@ body {
 }
 
 .logo-text-img {
-    height: 32px; /* Вернули нормальный размер */
+    height: 32px;
     object-fit: contain;
-    /* Убрали transform scale, чтобы ничего не разъезжалось */
 }
 
 .header-right {
@@ -103,8 +102,10 @@ body {
 /* --- МАКЕТ --- */
 .layout {
     display: flex;
-    max-width: 1600px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 1400px;
+    /* Прижимаем всё влево */
+    margin: 0; 
     padding: 24px;
     gap: 24px;
     min-height: calc(100vh - 70px);
