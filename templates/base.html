@@ -21,7 +21,8 @@
     <div class="layout">
         <aside class="sidebar" role="main">
             <!-- Профиль с кнопкой выхода -->
-            <div class="profile-block">
+                        <!-- Профиль с кнопкой выхода -->
+            <div class="profile-block" style="display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="window.location.href='/profile'">
                     {% if current_user.avatar %}
                         <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
@@ -35,7 +36,8 @@
                         <div class="profile-status">@{{ current_user.nickname }}</div>
                     </div>
                 </div>
-                <a href="/logout" class="btn-logout" title="Выйти">Выйти</a>
+                <!-- Кнопка выхода теперь аккуратно внутри -->
+                <a href="/logout" class="btn-logout">Выйти</a>
             </div>
 
             <nav class="nav-menu">
