@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Твой Профиль</h1>
+<p class="subtitle">Управляй своим аккаунтом и смотри стату</p>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px;">
+    
+    <!-- Левая колонка: Аватар и Имя -->
+    <div style="background: var(--card-bg); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); text-align: center;">
+        <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #333; margin-bottom: 16px; border: 3px solid var(--accent);">
+        
+        <form method="POST" action="/profile/upload-avatar" enctype="multipart/form-data" style="margin-bottom: 24px;">
+            <input type="file" name="avatar" accept="image/*" required style="font-size: 12px; margin-bottom: 8px; color: var(--text-muted);">
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 8px;">Загрузить аву</button>
+        </form>
+
+        <form method="POST" action="/profile/update" style="text-align: left;">
+            <label style="font-size: 12px; color: var(--text-muted);">Твоё Имя</label>
+            <input type="text" name="display_name" value="{{ current_user.display_name }}" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); margin-bottom: 12px; margin-top: 4px;">
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 8px;">Сохранить имя</button>
+        </form>
+
+        <div style="margin-top: 16px; font-size: 12px; color: var(--text-muted);">
+            Твой Ник (нельзя менять):<br><strong>@{{ current_user.nickname }}</strong>
+        </div>
+    </div>
+
+    <!-- Правая колонка: Статистика -->
+    <div>
+        <h2 style="font-size: 20px; margin-bottom: 16px;">Твоя Статистика</h2>
+        <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="card" style="cursor: default;">
+                <div class="card-icon">🛒</div>
+                <div class="card-title">{{ purchases_count }} шт.</div>
+                <div class="card-desc">Покупок выполнено</div>
+            </div>
+            <div class="card" style="cursor: default;">
+                <div class="card-icon">📝</div>
+                <div class="card-title">{{ notes_count }} шт.</div>
+                <div class="card-desc">Заметок создано</div>
+            </div>
+            <div class="card" style="cursor: default;">
+                <div class="card-icon">📅</div>
+                <div class="card-title">{{ events_count }} шт.</div>
+                <div class="card-desc">Событий в календаре</div>
+            </div>
+            <div class="card" style="cursor: default;">
+                <div class="card-icon">💳</div>
+                <div class="card-title">{{ "%.0f"|format(subs_sum) }} ₽</div>
+                <div class="card-desc">Тратишь на подписки в месяц</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
