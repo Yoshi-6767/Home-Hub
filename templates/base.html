@@ -19,8 +19,8 @@
 
     <div class="layout">
         <aside class="sidebar" role="main">
-            <!-- Профиль без кнопки выхода (она внутри страницы профиля) -->
-            <div class="profile-block" onclick="window.location.href='/profile'" style="cursor: pointer;">
+                        <!-- Профиль -->
+            <div class="profile-block" onclick="window.location.href='/profile'" style="cursor: pointer; display: flex; align-items: center; gap: 12px;">
                 {% if current_user.avatar %}
                     <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
                 {% else %}
