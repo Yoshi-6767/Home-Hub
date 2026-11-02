@@ -12,7 +12,10 @@
     <header class="top-header">
         <div class="header-left">
             <a href="/" class="logo-link">
-                <span class="logo-white">Tabibito</span><span class="logo-orange">Hub</span>
+                <!-- Логотип TH -->
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="TH" style="height: 40px; margin-right: 12px;">
+                <!-- Текст -->
+                <span class="logo-red">Tabibito</span><span class="logo-white">Hub</span>
             </a>
         </div>
         <div class="header-right">
@@ -22,7 +25,7 @@
                 {% if current_user.avatar %}
                     <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                 {% else %}
-                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #000; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center;">
                         {{ current_user.display_name[0]|upper }}
                     </div>
                 {% endif %}
@@ -38,7 +41,7 @@
                 {% if current_user.avatar %}
                     <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
                 {% else %}
-                    <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #000; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         {{ current_user.display_name[0]|upper }}
                     </div>
                 {% endif %}
