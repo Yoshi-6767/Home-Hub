@@ -73,7 +73,8 @@ body {
 }
 
 .logo-text-img {
-    height: 32px;
+    height: 50px; /* Сделали надпись большой */
+    margin-left: 20px; /* Отодвинули вправо от иконки TH */
     object-fit: contain;
 }
 
