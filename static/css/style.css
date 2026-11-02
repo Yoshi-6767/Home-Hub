@@ -77,9 +77,9 @@ body {
 }
 
 .logo-text-img {
-    height: 55px; /* Сделали надпись ОГРОМНОЙ */
+    height: 55px; 
     object-fit: contain;
-    margin-left: 10px; /* Отодвинули вправо */
+    margin-left: 10px; 
 }
 
 .header-right { display: flex; align-items: center; gap: 16px; }
@@ -99,11 +99,11 @@ body {
 .layout {
     display: flex;
     width: 100%;
-    max-width: 1600px;
-    margin: 0 auto; /* Центрируем сам контент */
+    /* Убрали центрирование, прижали влево */
+    margin: 0; 
     padding: 24px;
     gap: 24px;
-    flex: 1; /* Чтобы футер прижимался к низу */
+    flex: 1;
 }
 
 /* --- МЕНЮ СЛЕВА --- */
