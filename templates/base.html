@@ -9,46 +9,43 @@
 </head>
 <body>
 
-            <header class="top-header">
+    <header class="top-header">
         <div class="header-left">
             <a href="/" class="logo-link">
-                <div class="logo-icon-wrapper">
-                    <img src="{{ url_for('static', filename='logo.png') }}" alt="TH">
-                </div>
+                <!-- Оставили только надпись -->
                 <img src="{{ url_for('static', filename='logo_text.png') }}" alt="Tabibito Hub" class="logo-text-img">
             </a>
-        </div>
-        <div class="header-right">
-            <a href="/logout" class="btn-logout">Выйти</a>
         </div>
     </header>
 
     <div class="layout">
         <aside class="sidebar" role="main">
-            <div class="profile-block" onclick="window.location.href='/profile'" style="cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px;">
-                
-                {% if current_user.avatar %}
-                    <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                {% else %}
-                    <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        {{ current_user.display_name[0]|upper }}
+            <!-- Профиль с кнопкой выхода -->
+            <div class="profile-block">
+                <div style="display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="window.location.href='/profile'">
+                    {% if current_user.avatar %}
+                        <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                    {% else %}
+                        <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            {{ current_user.display_name[0]|upper }}
+                        </div>
+                    {% endif %}
+                    <div class="profile-info">
+                        <div class="profile-name">{{ current_user.display_name }}</div>
+                        <div class="profile-status">@{{ current_user.nickname }}</div>
                     </div>
-                {% endif %}
-                
-                <div class="profile-info">
-                    <div class="profile-name" style="font-weight: 600; font-size: 15px;">{{ current_user.display_name }}</div>
-                    <div class="profile-status" style="font-size: 12px; color: var(--text-muted);">@{{ current_user.nickname }}</div>
                 </div>
+                <a href="/logout" class="btn-logout" title="Выйти">Выйти</a>
             </div>
 
             <nav class="nav-menu">
-                <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-text">Главная</span></a>
-                <a href="/shopping" class="nav-item"><span class="nav-icon">📋</span><span class="nav-text">Покупки</span></a>
-                <a href="/wishes" class="nav-item"><span class="nav-icon">🎁</span><span class="nav-text">Желания</span></a>
-                <a href="/calendar" class="nav-item"><span class="nav-icon">📅</span><span class="nav-text">Календарь</span></a>
-                <a href="/notes" class="nav-item"><span class="nav-icon">📝</span><span class="nav-text">Заметки</span></a>
-                <a href="/subscriptions" class="nav-item"><span class="nav-icon">💳</span><span class="nav-text">Подписки</span></a>
-                <a href="/recipes" class="nav-item"><span class="nav-icon">🍳</span><span class="nav-text">Рецепты</span></a>
+                <a href="/" class="nav-item"><i class="ph ph-house"></i> Главная</a>
+                <a href="/shopping" class="nav-item"><i class="ph ph-shopping-cart"></i> Покупки</a>
+                <a href="/wishes" class="nav-item"><i class="ph ph-gift"></i> Желания</a>
+                <a href="/calendar" class="nav-item"><i class="ph ph-calendar"></i> Календарь</a>
+                <a href="/notes" class="nav-item"><i class="ph ph-note"></i> Заметки</a>
+                <a href="/subscriptions" class="nav-item"><i class="ph ph-credit-card"></i> Подписки</a>
+                <a href="/recipes" class="nav-item"><i class="ph ph-cooking-pot"></i> Рецепты</a>
             </nav>
         </aside>
 
@@ -60,8 +57,5 @@
     <footer class="footer">
         Разработано <a href="#">Osaka Group</a> © 2026
     </footer>
-</body>
-</html>
-    
 </body>
 </html>
