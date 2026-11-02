@@ -4,8 +4,6 @@
 <h1>Привет, {{ current_user.display_name }}!</h1>
 
 <div class="cards" style="margin-top: 24px;">
-
-<div class="cards">
     <a href="/shopping" class="card">
         <div class="card-icon">📋</div>
         <div class="card-title">Покупки</div>
@@ -21,20 +19,20 @@
         <div class="card-title">Календарь</div>
         <div class="card-desc">События и даты</div>
     </a>
+    <a href="/notes" class="card">
+        <div class="card-icon">📝</div>
+        <div class="card-title">Заметки</div>
+        <div class="card-desc">Твои записи</div>
+    </a>
+    <a href="/subscriptions" class="card">
+        <div class="card-icon">💳</div>
+        <div class="card-title">Подписки</div>
+        <div class="card-desc">Твои платежи</div>
+    </a>
     <a href="/recipes" class="card">
         <div class="card-icon">🍳</div>
         <div class="card-title">Рецепты</div>
         <div class="card-desc">Свои рецепты</div>
     </a>
-    <a href="/notes" class="card">
-    <div class="card-icon">📝</div>
-    <div class="card-title">Заметки</div>
-    <div class="card-desc">Твои записи</div>
-</a>
-    <a href="/subscriptions" class="card">
-    <div class="card-icon">💳</div>
-    <div class="card-title">Подписки</div>
-    <div class="card-desc">Твои платежи</div>
-</a>
 </div>
 {% endblock %}
