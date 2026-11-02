@@ -126,6 +126,9 @@ def load_user(user_id):
     except Exception:
         return None
 
+with app.app_context():
+    db.create_all()
+
 # --- АВТОРИЗАЦИЯ ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
