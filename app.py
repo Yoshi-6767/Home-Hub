@@ -126,11 +126,6 @@ def load_user(user_id):
     except Exception:
         return None
 
-# ВНИМАНИЕ: ПЕРЕСОЗДАЕМ БАЗУ (удали старые тестовые данные)
-with app.app_context():
-    db.drop_all()
-    db.create_all()
-
 # --- АВТОРИЗАЦИЯ ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
