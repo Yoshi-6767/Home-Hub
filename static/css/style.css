@@ -51,10 +51,10 @@ body {
 }
 
 .logo-text-img {
-    height: 50px; /* Размер логотипа */
+    height: 65px; /* Вот тут размер. Если мало - ставь 80px */
     object-fit: contain;
+    margin-top: -10px; /* Чуть подтянем вверх, чтобы было ровно */
 }
-
 /* --- МАКЕТ --- */
 .layout {
     display: flex;
