@@ -1,204 +1,50 @@
-/* Подключаем иконки Phosphor */
-@import url('https://unpkg.com/@phosphor-icons/web/src/regular/style.css');
+{% extends "base.html" %}
 
-:root {
-    --bg: #0a0a0a;              
-    --sidebar-bg: rgba(20, 20, 20, 0.7); /* Темное стекло */
-    --card-bg: rgba(30, 30, 30, 0.8);    /* Более благородный серый */
-    --text: #ffffff;            
-    --text-muted: #888888;      
-    --border: rgba(255, 255, 255, 0.08); /* Тонкая рамка */
-    
-    --accent: #E53935;          
-    --accent-hover: #c62828;
-    
-    --radius: 12px;
-}
+{% block content %}
+<h1>Привет, {{ current_user.display_name }}!</h1>
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', -apple-system, sans-serif;
-}
-
-body {
-    background-color: var(--bg);
-    /* Более стильный темный фон с легким красным свечением */
-    background-image: 
-        radial-gradient(circle at 15% 50%, rgba(229, 57, 53, 0.15), transparent 40%),
-        radial-gradient(circle at 85% 30%, rgba(229, 57, 53, 0.1), transparent 40%);
-    background-attachment: fixed;
-    color: var(--text);
-    line-height: 1.5;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* --- ШАПКА СВЕРХУ --- */
-.top-header {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 16px 32px;
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.logo-text-img {
-    height: 65px; /* Увеличили в полтора раза */
-    object-fit: contain;
-}
-
-/* --- МАКЕТ --- */
-.layout {
-    display: flex;
-    width: 100%;
-    max-width: 1500px;
-    margin: 0; /* Прижали влево */
-    padding: 32px;
-    gap: 32px;
-    flex: 1;
-}
-
-/* --- МЕНЮ СЛЕВА --- */
-.sidebar {
-    width: 260px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.profile-block {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    backdrop-filter: blur(10px);
-}
-
-.profile-info { display: flex; flex-direction: column; }
-.profile-name { font-weight: 600; font-size: 15px; }
-.profile-status { font-size: 12px; color: var(--text-muted); }
-.avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-.btn-logout {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    transition: 0.2s;
-    white-space: nowrap; /* Чтобы текст не переносился на новую строку */
-}
-.btn-logout:hover { 
-    background: var(--accent); 
-    color: #fff; 
-}
-
-.nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    background: transparent;
-    border-radius: var(--radius);
-    color: var(--text-muted);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 15px;
-    transition: 0.2s;
-}
-
-.nav-item i { font-size: 20px; }
-
-.nav-item:hover, .nav-item.active {
-    background: var(--card-bg);
-    color: var(--text);
-    border-left: 3px solid var(--accent);
-}
-
-/* --- КОНТЕНТ --- */
-.content { flex: 1; min-width: 0; }
-h1 { font-size: 32px; font-weight: 700; margin-bottom: 32px; }
-
-/* --- СЕТКА КАРТОЧЕК (Стильные строки) --- */
-.cards {
-    display: flex;
-    flex-direction: column; /* Выстраиваем в столбик */
-    gap: 12px; /* Отступ между строками */
-    margin-top: 24px;
-    max-width: 800px; /* Чтобы карточки не растягивались на весь экран */
-}
-
-.card {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 24px;
-    text-decoration: none;
-    color: var(--text);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-}
-
-.card:hover {
-    background: rgba(40, 40, 40, 0.9);
-    border-color: var(--accent);
-    transform: translateX(8px); /* При наведении карточка сдвигается вправо */
-    box-shadow: -4px 4px 20px rgba(229, 57, 53, 0.15); /* Красная тень слева */
-}
-
-.card-icon { 
-    font-size: 28px; 
-    color: var(--accent); 
-    background: rgba(229, 57, 53, 0.1); /* Красный полупрозрачный фон для иконки */
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.card-title { 
-    font-weight: 600; 
-    font-size: 18px; 
-    margin-bottom: 4px; 
-}
-
-.card-desc { 
-    color: var(--text-muted); 
-    font-size: 14px; 
-}
-
-/* --- ФУТЕР --- */
-.footer {
-    text-align: center;
-    padding: 24px;
-    color: var(--text-muted);
-    font-size: 14px;
-    border-top: 1px solid var(--border);
-    margin-top: auto;
-}
-.footer a { color: var(--text); text-decoration: none; font-weight: 600; }
+<div class="cards">
+    <a href="/shopping" class="card">
+        <div class="card-icon"><i class="ph ph-shopping-cart"></i></div>
+        <div>
+            <div class="card-title">Покупки</div>
+            <div class="card-desc">Списки того, что нужно купить</div>
+        </div>
+    </a>
+    <a href="/wishes" class="card">
+        <div class="card-icon"><i class="ph ph-gift"></i></div>
+        <div>
+            <div class="card-title">Желания</div>
+            <div class="card-desc">Что ты хочешь получить или купить</div>
+        </div>
+    </a>
+    <a href="/calendar" class="card">
+        <div class="card-icon"><i class="ph ph-calendar"></i></div>
+        <div>
+            <div class="card-title">Календарь</div>
+            <div class="card-desc">События, встречи и важные даты</div>
+        </div>
+    </a>
+    <a href="/notes" class="card">
+        <div class="card-icon"><i class="ph ph-note"></i></div>
+        <div>
+            <div class="card-title">Заметки</div>
+            <div class="card-desc">Твои мысли, записи и списки</div>
+        </div>
+    </a>
+    <a href="/subscriptions" class="card">
+        <div class="card-icon"><i class="ph ph-credit-card"></i></div>
+        <div>
+            <div class="card-title">Подписки</div>
+            <div class="card-desc">Контроль твоих ежемесячных платежей</div>
+        </div>
+    </a>
+    <a href="/recipes" class="card">
+        <div class="card-icon"><i class="ph ph-cooking-pot"></i></div>
+        <div>
+            <div class="card-title">Рецепты</div>
+            <div class="card-desc">Твоя личная кулинарная книга</div>
+        </div>
+    </a>
+</div>
+{% endblock %}
