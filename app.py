@@ -39,7 +39,7 @@ class User(UserMixin, db.Model):
     display_name = db.Column(db.String(50), nullable=False)          # Отображаемое имя
     nickname = db.Column(db.String(50), nullable=True)               # Ник (для друзей, не меняется)
     password_hash = db.Column(db.String(200), nullable=False)
-    avatar = db.Column(db.String(200), default='default.png')        # Аватарка
+    avatar = db.Column(db.String(200), nullable=True) # По умолчанию пусто        # Аватарка
 
 class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -210,7 +210,7 @@ def upload_avatar():
         return redirect(url_for('profile'))
     file = request.files['avatar']
     if file.filename != '':
-        filename = 'avatar_' + str(current_user.id) + '_' + secure_filename(file.filename)
+        filename = 'avatar_' + str(current_user.id) + '_' + str(uuid.uuid4())[:8] + '_' + secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         current_user.avatar = filename
