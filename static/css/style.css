@@ -2,11 +2,11 @@
 
 :root {
     --bg: #0a0a0a;              
-    --sidebar-bg: rgba(20, 20, 20, 0.7);
-    --card-bg: rgba(30, 30, 30, 0.85);
+    --sidebar-bg: #111111; /* Сделали темнее */
+    --card-bg: rgba(20, 20, 20, 0.95); /* Карточки почти непрозрачные */
     --text: #ffffff;            
-    --text-muted: #888888;      
-    --border: rgba(255, 255, 255, 0.08);
+    --text-muted: #bbbbbb;      
+    --border: rgba(255, 255, 255, 0.1);
     
     --accent: #E53935;          
     --accent-hover: #c62828;
@@ -23,8 +23,8 @@
 
 body {
     background-color: var(--bg);
-    /* Убрали тёмный градиент, оставили только картинку */
-    background-image: url('/static/bg.png');
+    /* Добавили легкое затемнение (30%), чтобы фон не перебивал текст */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/static/bg.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -80,10 +80,9 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 16px;
-    background: var(--card-bg);
+    background: #111111; /* Плотный фон */
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    backdrop-filter: blur(10px);
 }
 
 .profile-info { display: flex; flex-direction: column; }
