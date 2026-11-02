@@ -1,6 +1,6 @@
 :root {
     --bg: #121212;              
-    --sidebar-bg: rgba(24, 24, 24, 0.9);
+    --sidebar-bg: rgba(24, 24, 24, 0.7);
     --card-bg: rgba(30, 30, 30, 0.85);
     --text: #ffffff;            
     --text-muted: #9e9e9e;      
@@ -21,17 +21,15 @@
 
 body {
     background-color: var(--bg);
-    /* Убрали cover, поставили auto, чтобы не растягивался */
+    /* Вернули cover, чтобы обои заполняли ВЕСЬ экран */
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url('/static/bg.jpg');
-    background-size: auto; /* Картинка в оригинальном размере */
-    background-position: top center; /* Прижали к верху по центру */
-    background-repeat: no-repeat; /* Без повторов */
+    background-size: cover;
+    background-position: center;
     background-attachment: fixed;
-    
     color: var(--text);
     line-height: 1.5;
     min-height: 100vh;
-    overflow-x: hidden; /* Убираем горизонтальную прокрутку! */
+    overflow-x: hidden; 
 }
 
 /* --- ШАПКА СВЕРХУ --- */
