@@ -77,15 +77,19 @@ body {
 
 .profile-block {
     display: flex;
-    align-items: center; /* Выравниваем по центру по вертикали */
-    gap: 12px; /* Расстояние между аватаркой и текстом */
+    align-items: center;
+    gap: 12px;
     padding: 12px 16px;
-    background: #111111;
-    border: 1px solid var(--border);
+    background: transparent; /* Убрали черный фон */
+    border: none;            /* Убрали рамку */
     border-radius: var(--radius);
     transition: 0.2s;
+    cursor: pointer;
 }
-.profile-block:hover { border-color: var(--accent); }
+
+.profile-block:hover {
+    background: var(--card-bg); /* Легкая подсветка при наведении, как у кнопок меню */
+}
 
 .profile-info { display: flex; flex-direction: column; }
 .profile-name { font-weight: 600; font-size: 15px; }
