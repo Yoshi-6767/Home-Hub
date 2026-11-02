@@ -11,11 +11,11 @@
 
     <header class="top-header">
                 <div class="header-left">
-            <a href="/" class="logo-link">
-                <!-- Иконка TH (квадратная) -->
-                <img src="{{ url_for('static', filename='logo.png') }}" alt="TH" style="height: 40px; margin-right: 12px;">
-                <!-- Твоя надпись (вытянутая) -->
-                <img src="{{ url_for('static', filename='logo_text.png') }}" alt="Tabibito Hub" style="height: 32px;">
+                        <a href="/" class="logo-link">
+                <div class="logo-icon-wrapper">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="TH">
+                </div>
+                <img src="{{ url_for('static', filename='logo_text.png') }}" alt="Tabibito Hub" class="logo-text-img">
             </a>
         </div>
         <div class="header-right">
