@@ -9,9 +9,9 @@
 </head>
 <body>
 
-    <header class="top-header">
-                <div class="header-left">
-                        <a href="/" class="logo-link">
+        <header class="top-header">
+        <div class="header-left">
+            <a href="/" class="logo-link">
                 <div class="logo-icon-wrapper">
                     <img src="{{ url_for('static', filename='logo.png') }}" alt="TH">
                 </div>
@@ -19,17 +19,6 @@
             </a>
         </div>
         <div class="header-right">
-            <a href="/profile" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text);">
-                <span style="font-size: 14px;">Привет, <strong>{{ current_user.display_name }}</strong></span>
-                
-                {% if current_user.avatar %}
-                    <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
-                {% else %}
-                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center;">
-                        {{ current_user.display_name[0]|upper }}
-                    </div>
-                {% endif %}
-            </a>
             <a href="/logout" class="btn-logout">Выйти</a>
         </div>
     </header>
