@@ -3,36 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Hub</title>
+    <title>Tabibito Hub</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- Шапка сверху -->
     <header class="top-header">
         <div class="header-left">
             <a href="/" class="logo-link">
-                <span class="logo-white">Home</span><span class="logo-orange">Hub</span>
+                <span class="logo-white">Tabibito</span><span class="logo-orange">Hub</span>
             </a>
         </div>
         <div class="header-right">
-            <!-- Выводим НИК -->
-            <span style="color: var(--text-muted); font-size: 14px;">Вошёл как <strong>{{ current_user.nickname }}</strong></span>
+            <a href="/profile" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text);">
+                <span style="font-size: 14px;">Привет, <strong>{{ current_user.display_name }}</strong></span>
+                <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #333;">
+            </a>
             <a href="/logout" class="btn-logout">Выйти</a>
         </div>
     </header>
 
     <div class="layout">
-        <!-- Меню слева -->
         <aside class="sidebar">
-            <!-- Профиль над меню -->
-            <div class="profile-block">
-                <!-- Выводим первую букву НИКА -->
-                <div class="avatar">{{ current_user.nickname[0]|upper }}</div>
+            <div class="profile-block" onclick="window.location.href='/profile'" style="cursor: pointer;">
+                <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #333;">
                 <div class="profile-info">
-                    <div class="profile-name" title="{{ current_user.nickname }}">{{ current_user.nickname }}</div>
-                    <div class="profile-status">В сети</div>
+                    <div class="profile-name">{{ current_user.display_name }}</div>
+                    <div class="profile-status">@{{ current_user.nickname }}</div>
                 </div>
             </div>
 
