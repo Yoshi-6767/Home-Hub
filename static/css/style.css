@@ -542,3 +542,9 @@ h1 {
 .add-form input:focus, .add-form select:focus {
     border-color: var(--accent);
 }
+
+/* Убиваем надоедливую стрелку */
+.sidebar::before {
+    display: none !important;
+    content: "" !important;
+}
