@@ -430,7 +430,7 @@ def library_search():
             if response.status_code == 200:
                 for item in response.json().get('results', [])[:10]:
                     results.append({'api_id': str(item.get('id')), 'title': item.get('title') or item.get('name'), 'poster_url': f"https://image.tmdb.org/t/p/w500{item.get('poster_path')}" if item.get('poster_path') else '', 'description': item.get('overview', '')})
-        except Exception: pass
+        except Exception as e: print(f"TMDB Error: {e}")
 
     elif category == 'book':
         url = f"https://www.googleapis.com/books/v1/volumes?q={query}&maxResults=10"
@@ -439,18 +439,17 @@ def library_search():
             if response.status_code == 200:
                 for item in response.json().get('items', []):
                     vol = item.get('volumeInfo', {})
-                    results.append({'api_id': item.get('id'), 'title': vol.get('title'), 'poster_url': vol.get('imageLinks', {}).get('thumbnail', ''), 'description': vol.get('description', '')})
-        except Exception: pass
+                    results.append({'api_id': item.get('id'), 'title': vol.get('title', 'Без названия'), 'poster_url': vol.get('imageLinks', {}).get('thumbnail', ''), 'description': vol.get('description', '')})
+        except Exception as e: print(f"Books Error: {e}")
         
     elif category == 'anime':
-        # Jikan API (MyAnimeList) - без токена
         url = f"https://api.jikan.moe/v4/anime?q={query}&limit=10"
         try:
             response = requests.get(url)
             if response.status_code == 200:
                 for item in response.json().get('data', []):
-                    results.append({'api_id': str(item.get('mal_id')), 'title': item.get('title'), 'poster_url': item.get('images', {}).get('jpg', {}).get('image_url', ''), 'description': item.get('synopsis', '')})
-        except Exception: pass
+                    results.append({'api_id': str(item.get('mal_id')), 'title': item.get('title', 'Без названия'), 'poster_url': item.get('images', {}).get('jpg', {}).get('image_url', ''), 'description': item.get('synopsis', '')})
+        except Exception as e: print(f"Anime Error: {e}")
 
     return jsonify(results)
 
@@ -491,7 +490,10 @@ def library_item_delete(item_id):
 @app.route('/library/<cat_code>/top10')
 @login_required
 def library_top10(cat_code):
-    return render_template('library_top10.html', items=LibraryItem.query.filter_by(user_id=current_user.id, category=cat_code).order_by(LibraryItem.top_rank.asc()).all(), cat_code=cat_code)
+    # Берем только те записи, у которых top_rank больше 0 (то есть они реально в топе)
+    items = LibraryItem.query.filter(LibraryItem.user_id == current_user.id, LibraryItem.category == cat_code, LibraryItem.top_rank > 0).order_by(LibraryItem.top_rank.asc()).all()
+    return render_template('library_top10.html', items=items, cat_code=cat_code)
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
