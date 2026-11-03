@@ -20,9 +20,13 @@
 <div id="search-block" style="display: none; background: var(--card-bg); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 32px;">
     <div class="add-form" style="margin-bottom: 0;">
         <input type="text" id="search-query" placeholder="Введите название..." style="flex: 1;">
-        <button class="btn-primary" onclick="doSearch()">Найти</button>
+        <button class="btn-primary" onclick="startSearch()">Найти</button>
     </div>
     <div id="search-results" class="cards" style="margin-top: 24px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));"></div>
+    <!-- Кнопка показать больше -->
+    <div id="load-more-container" style="text-align: center; margin-top: 24px; display: none;">
+        <button class="btn-primary" onclick="loadMore()" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);">Показать больше</button>
+    </div>
 </div>
 
 <hr style="border-color: var(--border); margin: 32px 0;">
@@ -50,52 +54,83 @@
     {% endfor %}
 </div>
 
-<!-- Модальное окно для просмотра описания -->
+<!-- Модальное окно -->
 <div id="desc-modal" class="modal-overlay">
     <div class="modal-content">
         <button class="modal-close" onclick="closeModal()">&times;</button>
         <h2 id="modal-title" style="margin-bottom: 16px;"></h2>
-        <p id="modal-desc" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;"></p>
+        <p id="modal-desc" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; max-height: 300px; overflow-y: auto;"></p>
         <button class="btn-primary" id="modal-add-btn" style="width: 100%;">Добавить в библиотеку</button>
     </div>
 </div>
 
 <script>
-// Если в памяти есть вкладка - берем её, иначе Фильмы
 let currentCategory = localStorage.getItem('currentLibTab') || 'movie';
+let currentQuery = '';
+let currentPage = 1;
 
 function switchTab(cat) {
     currentCategory = cat;
-    localStorage.setItem('currentLibTab', cat); // Запоминаем вкладку
+    localStorage.setItem('currentLibTab', cat);
     
-    // Красим активную кнопку
     document.querySelectorAll('.library-tabs .btn-nav').forEach(btn => btn.classList.remove('active'));
     document.getElementById('tab-' + cat).classList.add('active');
-
-    // Меняем ссылку на Топ-10
     document.getElementById('top10-btn').href = `/library/${cat}/top10`;
 
-    // Показываем только карточки нужной категории
+    // Очищаем поиск при смене вкладки (фикс бага)
+    document.getElementById('search-block').style.display = 'none';
+    document.getElementById('search-results').innerHTML = '';
+    document.getElementById('load-more-container').style.display = 'none';
+
     document.querySelectorAll('.item-card').forEach(card => {
         card.style.display = (card.dataset.category === cat) ? 'flex' : 'none';
     });
 }
 
-// При загрузке страницы открываем ту вкладку, которая была
 document.addEventListener('DOMContentLoaded', () => switchTab(currentCategory));
 
-// Поиск
-function doSearch() {
-    const query = document.getElementById('search-query').value.trim();
-    if (!query) return;
-    const resultsGrid = document.getElementById('search-results');
-    resultsGrid.innerHTML = '<p>Ищем...</p>';
+// Начать новый поиск
+function startSearch() {
+    currentQuery = document.getElementById('search-query').value.trim();
+    if (!currentQuery) return;
+    currentPage = 1;
+    document.getElementById('search-results').innerHTML = '';
+    performSearch();
+}
 
-    fetch(`/library/search?q=${encodeURIComponent(query)}&category=${currentCategory}`)
+// Загрузить еще
+function loadMore() {
+    currentPage++;
+    performSearch();
+}
+
+// Сам поиск
+function performSearch() {
+    const resultsGrid = document.getElementById('search-results');
+    const loadMoreBtn = document.getElementById('load-more-container');
+    
+    if (currentPage === 1) {
+        resultsGrid.innerHTML = '<p>Ищем...</p>';
+        loadMoreBtn.style.display = 'none';
+    }
+
+    fetch(`/library/search?q=${encodeURIComponent(currentQuery)}&category=${currentCategory}&page=${currentPage}`)
         .then(res => res.json())
         .then(data => {
-            resultsGrid.innerHTML = ''; 
-            if (!data || data.length === 0) { resultsGrid.innerHTML = '<p>Ничего не найдено.</p>'; return; }
+            if (currentPage === 1) resultsGrid.innerHTML = ''; 
+            
+            if (!data || data.length === 0) { 
+                if (currentPage === 1) resultsGrid.innerHTML = '<p>Ничего не найдено.</p>'; 
+                loadMoreBtn.style.display = 'none';
+                return; 
+            }
+
+            // Показываем кнопку, если пришло ровно 10 результатов (значит, могут быть еще)
+            if (data.length === 10) {
+                loadMoreBtn.style.display = 'block';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
 
             data.forEach(item => {
                 const card = document.createElement('div');
@@ -116,7 +151,6 @@ function doSearch() {
         });
 }
 
-// Открытие модалки с описанием
 function openModal(api_id, title, poster_url, description) {
     document.getElementById('modal-title').innerText = title;
     document.getElementById('modal-desc').innerText = description || 'Описание отсутствует.';
@@ -129,7 +163,6 @@ function closeModal() {
     document.getElementById('desc-modal').style.display = 'none';
 }
 
-// Само добавление
 function addItem(api_id, title, poster_url, description) {
     fetch('/library/add', {
         method: 'POST',
@@ -138,9 +171,7 @@ function addItem(api_id, title, poster_url, description) {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === 'ok') { 
-            window.location.reload(); // Перезагружаем, но вкладка запомнена в localStorage!
-        }
+        if (data.status === 'ok') { window.location.reload(); }
         else if (data.status === 'exists') { alert('Это уже есть в твоей библиотеке!'); }
     });
 }
