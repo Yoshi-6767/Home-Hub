@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="javascript:history.back()" class="back-link"><i class="ph ph-arrow-left"></i> Назад</a>
+
+<div style="display: flex; gap: 32px; margin-top: 24px;">
+    {% if item.poster_url %}
+        <img src="{{ item.poster_url }}" style="width: 300px; border-radius: var(--radius); object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    {% endif %}
+    
+    <div style="flex: 1;">
+        <h1>{{ item.title }}</h1>
+        <p class="subtitle" style="margin-bottom: 24px;">{{ item.description }}</p>
+
+        <form method="POST" style="background: var(--card-bg); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Статус</label>
+                <select name="status" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px;">
+                    <option value="want" {% if item.status == 'want' %}selected{% endif %}>Хочу посмотреть/прочитать</option>
+                    <option value="watching" {% if item.status == 'watching' %}selected{% endif %}>В процессе</option>
+                    <option value="completed" {% if item.status == 'completed' %}selected{% endif %}>Завершено</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Оценка (от 1 до 10, 0 = без оценки)</label>
+                <input type="number" name="rating" value="{{ item.rating }}" min="0" max="10" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Место в Топ-10 (0 = не в топе)</label>
+                <input type="number" name="top_rank" value="{{ item.top_rank }}" min="0" max="10" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Твой отзыв</label>
+                <textarea name="review" rows="4" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px;">{{ item.review }}</textarea>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button type="submit" class="btn-primary" style="flex: 1;">Сохранить</button>
+                <button type="submit" formaction="/library/item/{{ item.id }}/delete" class="btn-danger" style="background: #E53935; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;" onclick="return confirm('Удалить нахуй?')">Удалить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
