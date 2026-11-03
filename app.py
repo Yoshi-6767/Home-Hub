@@ -443,16 +443,23 @@ def library_search():
                     results.append({'api_id': item.get('id'), 'title': vol.get('title', 'Без названия'), 'poster_url': vol.get('imageLinks', {}).get('thumbnail', ''), 'description': vol.get('description', '')})
         except Exception as e: print(f"Books Error: {e}")
         
-    elif category == 'anime':
-        url = f"https://api.jikan.moe/v4/anime?q={query}&limit=10"
+        elif category == 'anime':
+        # Используем Kitsu API вместо Jikan
+        url = f"https://kitsu.io/api/edge/anime?filter[text]={query}&page[limit]=10"
         try:
             response = requests.get(url)
             if response.status_code == 200:
                 for item in response.json().get('data', []):
-                    results.append({'api_id': str(item.get('mal_id')), 'title': item.get('title', 'Без названия'), 'poster_url': item.get('images', {}).get('jpg', {}).get('image_url', ''), 'description': item.get('synopsis', '')})
+                    attrs = item.get('attributes', {})
+                    poster = attrs.get('posterImage', {}).get('medium', '') if attrs.get('posterImage') else ''
+                    desc = attrs.get('synopsis', '')
+                    results.append({
+                        'api_id': str(item.get('id')), 
+                        'title': attrs.get('canonicalTitle', 'Без названия'), 
+                        'poster_url': poster, 
+                        'description': desc
+                    })
         except Exception as e: print(f"Anime Error: {e}")
-
-    return jsonify(results)
 
 @app.route('/library/add', methods=['POST'])
 @login_required
