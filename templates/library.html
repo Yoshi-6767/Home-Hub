@@ -61,10 +61,12 @@
 </div>
 
 <script>
-let currentCategory = 'movie';
+// Если в памяти есть вкладка - берем её, иначе Фильмы
+let currentCategory = localStorage.getItem('currentLibTab') || 'movie';
 
 function switchTab(cat) {
     currentCategory = cat;
+    localStorage.setItem('currentLibTab', cat); // Запоминаем вкладку
     
     // Красим активную кнопку
     document.querySelectorAll('.library-tabs .btn-nav').forEach(btn => btn.classList.remove('active'));
@@ -79,8 +81,8 @@ function switchTab(cat) {
     });
 }
 
-// При загрузке открываем Фильмы
-document.addEventListener('DOMContentLoaded', () => switchTab('movie'));
+// При загрузке страницы открываем ту вкладку, которая была
+document.addEventListener('DOMContentLoaded', () => switchTab(currentCategory));
 
 // Поиск
 function doSearch() {
@@ -102,7 +104,6 @@ function doSearch() {
                 card.style.overflow = 'hidden';
                 const imgHtml = item.poster_url ? `<img src="${item.poster_url}" style="width: 100%; height: 250px; object-fit: cover; border-bottom: 1px solid var(--border);">` : `<div style="width: 100%; height: 250px; background: var(--bg); display: flex; align-items: center; justify-content: center;"><i class="ph ph-image" style="font-size: 48px;"></i></div>`;
 
-                // Вместо прямого добавления - открываем модалку
                 card.innerHTML = `
                     ${imgHtml}
                     <div style="padding: 12px;">
@@ -119,11 +120,8 @@ function doSearch() {
 function openModal(api_id, title, poster_url, description) {
     document.getElementById('modal-title').innerText = title;
     document.getElementById('modal-desc').innerText = description || 'Описание отсутствует.';
-    
     const btn = document.getElementById('modal-add-btn');
-    // Перепривязываем кнопку "Добавить" к текущему фильму
     btn.onclick = function() { addItem(api_id, title, poster_url, description); };
-    
     document.getElementById('desc-modal').style.display = 'flex';
 }
 
@@ -140,7 +138,9 @@ function addItem(api_id, title, poster_url, description) {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === 'ok') { window.location.reload(); }
+        if (data.status === 'ok') { 
+            window.location.reload(); // Перезагружаем, но вкладка запомнена в localStorage!
+        }
         else if (data.status === 'exists') { alert('Это уже есть в твоей библиотеке!'); }
     });
 }
