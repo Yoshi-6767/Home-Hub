@@ -587,6 +587,61 @@ def uploaded_file(filename):
 def recipes():
     return render_template('recipes.html')
 
+# --- БИБЛИОТЕКА (РАЗДЕЛЫ) ---
+@app.route('/library/movies')
+@login_required
+def library_movies():
+    items = LibraryItem.query.filter_by(user_id=current_user.id, category='movie').order_by(LibraryItem.created_at.desc()).all()
+    return render_template('library_page.html', items=items, cat_name="Фильмы", cat_code="movie")
+
+@app.route('/library/tv')
+@login_required
+def library_tv():
+    items = LibraryItem.query.filter_by(user_id=current_user.id, category='tv').order_by(LibraryItem.created_at.desc()).all()
+    return render_template('library_page.html', items=items, cat_name="Сериалы", cat_code="tv")
+
+@app.route('/library/books')
+@login_required
+def library_books():
+    items = LibraryItem.query.filter_by(user_id=current_user.id, category='book').order_by(LibraryItem.created_at.desc()).all()
+    return render_template('library_page.html', items=items, cat_name="Книги", cat_code="book")
+
+# Страница редактирования конкретной записи
+@app.route('/library/item/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def library_item(item_id):
+    item = LibraryItem.query.filter_by(id=item_id, user_id=current_user.id).first_or_404()
+    
+    if request.method == 'POST':
+        item.status = request.form.get('status', 'want')
+        item.rating = int(request.form.get('rating', 0))
+        item.review = request.form.get('review', '')
+        item.top_rank = int(request.form.get('top_rank', 0))
+        db.session.commit()
+        flash('Изменения сохранены!', 'success')
+        return redirect(url_for('library_item', item_id=item.id))
+        
+    return render_template('library_item.html', item=item)
+
+# Удаление
+@app.route('/library/item/<int:item_id>/delete', methods=['POST'])
+@login_required
+def library_item_delete(item_id):
+    item = LibraryItem.query.filter_by(id=item_id, user_id=current_user.id).first_or_404()
+    cat = item.category
+    db.session.delete(item)
+    db.session.commit()
+    if cat == 'movie': return redirect(url_for('library_movies'))
+    if cat == 'tv': return redirect(url_for('library_tv'))
+    return redirect(url_for('library_books'))
+
+# Топ-10
+@app.route('/library/<cat_code>/top10')
+@login_required
+def library_top10(cat_code):
+    items = LibraryItem.query.filter_by(user_id=current_user.id, category=cat_code).order_by(LibraryItem.top_rank.asc()).all()
+    return render_template('library_top10.html', items=items, cat_code=cat_code)
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
