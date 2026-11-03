@@ -43,9 +43,9 @@ a:hover { color: var(--accent-hover); }
 .top-header {
     display: flex;
     justify-content: flex-start;
-    align-items: center;
-    padding: 0 32px; /* Убрали вертикальные отступы, они больше не нужны */
-    height: 60px; /* Высота шапки строго 60px (как ты нарисовал) */
+    align-items: center; /* Это центрирует логотип идеально по вертикали */
+    padding: 0 32px; /* Убрали жесткие отступы сверху/снизу */
+    height: 80px; /* ЗОЛОТАЯ СЕРЕДИНА (было 60, было 120, теперь 80) */
     background: rgba(18, 18, 18, 0.8);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
@@ -55,10 +55,9 @@ a:hover { color: var(--accent-hover); }
 }
 
 .logo-text-img {
-    height: 50px; /* Логотип чуть больше, но влезает в шапку 60px */
+    height: 60px; /* Логотип влезает в шапку 80px с запасом в 10px сверху и снизу */
     object-fit: contain;
-    margin-left: 20px; /* Сдвинули правее */
-    /* Центрирование по вертикали делается автоматически через align-items: center в шапке */
+    margin-left: 20px; /* Сдвиг вправо от левого края */
 }
 
 /* --- МАКЕТ --- */
