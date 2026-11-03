@@ -1,46 +1,63 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a href="javascript:history.back()" class="back-link"><i class="ph ph-arrow-left"></i> Назад</a>
+<a href="javascript:history.back()" class="back-link" style="color: var(--text-muted); text-decoration: none; display: inline-block; margin-bottom: 24px;">
+    <i class="ph ph-arrow-left"></i> Назад
+</a>
 
-<div style="display: flex; gap: 32px; margin-top: 24px;">
-    {% if item.poster_url %}
-        <img src="{{ item.poster_url }}" style="width: 300px; border-radius: var(--radius); object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-    {% endif %}
+<div style="display: flex; gap: 32px; margin-top: 24px; align-items: flex-start;">
+    <!-- Постер -->
+    <div style="flex-shrink: 0;">
+        {% if item.poster_url %}
+            <img src="{{ item.poster_url }}" style="width: 300px; border-radius: var(--radius); object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        {% else %}
+            <div style="width: 300px; height: 450px; background: var(--card-bg); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
+                <i class="ph ph-image" style="font-size: 64px; color: var(--text-muted);"></i>
+            </div>
+        {% endif %}
+    </div>
     
+    <!-- Информация и форма -->
     <div style="flex: 1;">
-        <h1>{{ item.title }}</h1>
-        <p class="subtitle" style="margin-bottom: 24px;">{{ item.description }}</p>
+        <h1 style="margin-bottom: 16px;">{{ item.title }}</h1>
+        <p class="subtitle" style="margin-bottom: 32px; line-height: 1.6;">{{ item.description }}</p>
 
-        <form method="POST" style="background: var(--card-bg); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
+        <form method="POST" style="background: var(--card-bg); padding: 32px; border-radius: var(--radius); border: 1px solid var(--border);">
             
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Статус</label>
-                <select name="status" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px;">
-                    <option value="want" {% if item.status == 'want' %}selected{% endif %}>Хочу посмотреть/прочитать</option>
+            <!-- Статус -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text);">Статус</label>
+                <select name="status" style="width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                    <option value="want" {% if item.status == 'want' %}selected{% endif %}>В планах</option>
                     <option value="watching" {% if item.status == 'watching' %}selected{% endif %}>В процессе</option>
                     <option value="completed" {% if item.status == 'completed' %}selected{% endif %}>Завершено</option>
                 </select>
             </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Оценка (от 1 до 10, 0 = без оценки)</label>
-                <input type="number" name="rating" value="{{ item.rating }}" min="0" max="10" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px;">
+            <!-- Оценка -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text);">Оценка (от 1 до 10)</label>
+                <input type="number" name="rating" value="{{ item.rating }}" min="0" max="10" style="width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                <small style="color: var(--text-muted); font-size: 12px; margin-top: 4px; display: block;">0 = без оценки</small>
             </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Место в Топ-10 (0 = не в топе)</label>
-                <input type="number" name="top_rank" value="{{ item.top_rank }}" min="0" max="10" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px;">
+            <!-- Место в топе -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text);">Место в Топ-10</label>
+                <input type="number" name="top_rank" value="{{ item.top_rank }}" min="0" max="10" style="width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                <small style="color: var(--text-muted); font-size: 12px; margin-top: 4px; display: block;">0 = не в топе</small>
             </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Твой отзыв</label>
-                <textarea name="review" rows="4" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px;">{{ item.review }}</textarea>
+            <!-- Отзыв -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text);">Твой отзыв</label>
+                <textarea name="review" rows="4" style="width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 8px; font-family: inherit; font-size: 14px; resize: vertical;">{{ item.review }}</textarea>
             </div>
 
+            <!-- Кнопки -->
             <div style="display: flex; gap: 12px;">
-                <button type="submit" class="btn-primary" style="flex: 1;">Сохранить</button>
-                <button type="submit" formaction="/library/item/{{ item.id }}/delete" class="btn-danger" style="background: #E53935; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;" onclick="return confirm('Удалить нахуй?')">Удалить</button>
+                <button type="submit" class="btn-primary" style="flex: 1; padding: 14px;">Сохранить изменения</button>
+                <button type="submit" formaction="/library/item/{{ item.id }}/delete" class="btn-primary" style="background: #E53935; flex: 1; padding: 14px;" onclick="return confirm('Удалить эту запись?')">Удалить</button>
             </div>
         </form>
     </div>
