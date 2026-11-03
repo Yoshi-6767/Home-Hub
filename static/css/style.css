@@ -52,7 +52,12 @@ a:hover { color: var(--accent-hover); }
     z-index: 100;
 }
 
-.logo-text-img { height: 50px; object-fit: contain; }
+.logo-text-img {
+    height: 70px;       /* Сделали надпись больше (было 50px) */
+    margin-left: 40px;  /* Сдвинули вправо от левого края экрана */
+    margin-top: 10px;   /* Чуть опустили вниз для центрирования */
+    object-fit: contain;
+}
 
 /* --- МАКЕТ --- */
 .layout {
