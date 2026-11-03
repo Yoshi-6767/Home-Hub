@@ -3,37 +3,40 @@
 {% block content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
     <h1><i class="ph ph-books" style="color: var(--accent);"></i> Моя Библиотека</h1>
+    
+    <!-- Кнопка Топ-10, меняет ссылку в зависимости от вкладки -->
+    <a href="/library/movie/top10" id="top10-btn" class="btn-primary" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);">
+        <i class="ph ph-trophy"></i> Мой Топ-10
+    </a>
 </div>
 
-<!-- Вкладки категорий -->
+<!-- Вкладки -->
 <div class="library-tabs" style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
-    <button class="btn-nav active" onclick="searchCategory('movie')" id="tab-movie">Фильмы</button>
-    <button class="btn-nav" onclick="searchCategory('tv')" id="tab-tv">Сериалы</button>
-    <button class="btn-nav" onclick="searchCategory('book')" id="tab-book">Книги</button>
-    <button class="btn-nav" onclick="searchCategory('game')" id="tab-game" disabled style="opacity: 0.5; cursor: not-allowed;">Игры (Скоро)</button>
+    <button class="btn-nav active" onclick="switchTab('movie')" id="tab-movie">Фильмы</button>
+    <button class="btn-nav" onclick="switchTab('tv')" id="tab-tv">Сериалы</button>
+    <button class="btn-nav" onclick="switchTab('book')" id="tab-book">Книги</button>
 </div>
 
 <!-- Форма поиска -->
-<div class="add-form" style="margin-bottom: 32px;">
-    <input type="text" id="search-query" placeholder="Введите название..." style="flex: 1; padding: 12px 16px;">
-    <button class="btn-primary" onclick="doSearch()">Найти</button>
-</div>
+<button class="btn-primary" onclick="document.getElementById('search-block').style.display='block'" style="margin-bottom: 24px;">+ Добавить запись</button>
 
-<!-- Результаты поиска (скрыты по умолчанию) -->
-<div id="search-results" style="display: none; margin-bottom: 40px;">
-    <h2 style="margin-bottom: 16px; font-size: 20px;">Результаты поиска</h2>
-    <div class="cards" id="results-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); max-width: 100%;">
-        <!-- Сюда будут падать карточки из API -->
+<div id="search-block" style="display: none; background: var(--card-bg); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 32px;">
+    <div class="add-form" style="margin-bottom: 0;">
+        <input type="text" id="search-query" placeholder="Введите название..." style="flex: 1;">
+        <button class="btn-primary" onclick="doSearch()">Найти</button>
+    </div>
+    <div id="search-results" class="cards" style="margin-top: 24px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
+        <!-- Результаты -->
     </div>
 </div>
 
-<hr style="border-color: var(--border); margin: 40px 0;">
+<hr style="border-color: var(--border); margin: 32px 0;">
 
-<!-- Мои добавленные записи -->
-<h2 style="margin-bottom: 24px; font-size: 24px;">Мои записи</h2>
-<div class="cards" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); max-width: 100%;">
+<!-- Мои записи (сетка) -->
+<div class="cards" id="my-items" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); max-width: 100%;">
     {% for item in items %}
-    <div class="card" style="padding: 0; overflow: hidden; cursor: pointer;">
+    <!-- data-category скрывает лишние записи через JS -->
+    <div class="card item-card" data-category="{{ item.category }}" style="padding: 0; overflow: hidden; cursor: pointer;" onclick="window.location.href='/library/item/{{ item.id }}'">
         {% if item.poster_url %}
             <img src="{{ item.poster_url }}" alt="poster" style="width: 100%; height: 280px; object-fit: cover; border-bottom: 1px solid var(--border);">
         {% else %}
@@ -44,61 +47,58 @@
         
         <div style="padding: 16px;">
             <div class="card-title" style="font-size: 16px; margin-bottom: 8px;">{{ item.title }}</div>
-            
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 12px; color: var(--text-muted);">
-                    {% if item.category == 'movie' %}Фильм
-                    {% elif item.category == 'tv' %}Сериал
-                    {% elif item.category == 'book' %}Книга
-                    {% endif %}
-                </span>
-                <span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">
-                    {{ item.status }}
+                    {% if item.rating > 0 %}<i class="ph ph-star" style="color: var(--accent);"></i> {{ item.rating }}/10{% else %}Без оценки{% endif %}
                 </span>
             </div>
         </div>
     </div>
     {% else %}
-    <p class="empty">Твоя библиотека пока пуста. Найди что-нибудь через поиск!</p>
+    <p class="empty">Твоя библиотека пока пуста.</p>
     {% endfor %}
 </div>
 
-<!-- Скрипт для работы с поиском -->
 <script>
 let currentCategory = 'movie';
 
-function searchCategory(cat) {
+// Переключение вкладок
+function switchTab(cat) {
     currentCategory = cat;
-    // Меняем активный стиль у кнопок
+    
+    // Красим активную кнопку
     document.querySelectorAll('.library-tabs .btn-nav').forEach(btn => btn.classList.remove('active'));
     document.getElementById('tab-' + cat).classList.add('active');
+
+    // Меняем ссылку на Топ-10
+    document.getElementById('top10-btn').href = `/library/${cat}/top10`;
+
+    // Скрываем/показываем карточки
+    document.querySelectorAll('.item-card').forEach(card => {
+        if (card.dataset.category === cat) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 }
 
+// При загрузке страницы сразу фильтруем (показываем только фильмы)
+document.addEventListener('DOMContentLoaded', () => switchTab('movie'));
+
+// Поиск
 function doSearch() {
     const query = document.getElementById('search-query').value.trim();
     if (!query) return;
 
-    const resultsDiv = document.getElementById('search-results');
-    const resultsGrid = document.getElementById('results-grid');
-    
-    // Показываем загрузку
-    resultsDiv.style.display = 'block';
+    const resultsGrid = document.getElementById('search-results');
     resultsGrid.innerHTML = '<p>Ищем...</p>';
 
     fetch(`/library/search?q=${encodeURIComponent(query)}&category=${currentCategory}`)
         .then(res => res.json())
         .then(data => {
-            if (data.error) {
-                resultsGrid.innerHTML = '<p>Ошибка поиска</p>';
-                return;
-            }
-            
-            resultsGrid.innerHTML = ''; // Очищаем
-            
-            if (data.length === 0) {
-                resultsGrid.innerHTML = '<p>Ничего не найдено.</p>';
-                return;
-            }
+            resultsGrid.innerHTML = ''; 
+            if (data.length === 0) { resultsGrid.innerHTML = '<p>Ничего не найдено.</p>'; return; }
 
             data.forEach(item => {
                 const card = document.createElement('div');
@@ -119,34 +119,21 @@ function doSearch() {
                 `;
                 resultsGrid.appendChild(card);
             });
-        })
-        .catch(err => {
-            resultsGrid.innerHTML = '<p>Ошибка сети</p>';
         });
 }
 
+// Добавление
 function addItem(api_id, title, poster_url, description) {
     fetch('/library/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            category: currentCategory,
-            api_id: api_id,
-            title: title,
-            poster_url: poster_url,
-            description: description
-        })
+        body: JSON.stringify({ category: currentCategory, api_id, title, poster_url, description })
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === 'ok') {
-            alert('Добавлено в библиотеку!');
-            window.location.reload(); // Обновляем страницу, чтобы увидеть в списке
-        } else if (data.status === 'exists') {
-            alert('Это уже есть в твоей библиотеке!');
-        }
-    })
-    .catch(err => alert('Ошибка при добавлении'));
+        if (data.status === 'ok') { window.location.reload(); }
+        else if (data.status === 'exists') { alert('Это уже есть в твоей библиотеке!'); }
+    });
 }
 </script>
 {% endblock %}
