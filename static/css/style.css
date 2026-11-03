@@ -55,9 +55,9 @@ a:hover { color: var(--accent-hover); }
 }
 
 .logo-text-img {
-    height: 60px; /* Логотип влезает в шапку 80px с запасом в 10px сверху и снизу */
+    height: 75px; /* Увеличили с 60 до 75. Если мало - ставь 78 */
     object-fit: contain;
-    margin-left: 20px; /* Сдвиг вправо от левого края */
+    margin-left: 20px;
 }
 
 /* --- МАКЕТ --- */
