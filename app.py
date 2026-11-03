@@ -419,6 +419,7 @@ def library():
 def library_search():
     query = request.args.get('q', '').strip()
     category = request.args.get('category', 'movie')
+    page = request.args.get('page', 1, type=int)
     
     if not query: 
         return jsonify({'error': 'Empty query'}), 400
@@ -426,7 +427,7 @@ def library_search():
     results = []
 
     if category in ['movie', 'tv']:
-        url = f"https://api.themoviedb.org/3/search/{category}?query={query}&language=ru-RU"
+        url = f"https://api.themoviedb.org/3/search/{category}?query={query}&language=ru-RU&page={page}"
         headers = {"accept": "application/json", "Authorization": f"Bearer {TMDB_TOKEN}"}
         try:
             response = requests.get(url, headers=headers)
@@ -442,7 +443,7 @@ def library_search():
             print(f"TMDB Error: {e}")
 
     elif category == 'book':
-        url = f"https://www.googleapis.com/books/v1/volumes?q={query}&maxResults=10&key={GOOGLE_BOOKS_KEY}"
+        url = f"https://www.googleapis.com/books/v1/volumes?q={query}&maxResults=40&key={GOOGLE_BOOKS_KEY}"
         try:
             response = requests.get(url)
             if response.status_code == 200:
@@ -458,22 +459,39 @@ def library_search():
             print(f"Books Error: {e}")
         
     elif category == 'anime':
-        url = f"https://kitsu.io/api/edge/anime?filter[text]={query}&page[limit]=10"
+        url = "https://shikimori.one/api/graphql"
+        query_str = """
+        query($search: String, $page: Int, $limit: Int) {
+          animes(search: $search, page: $page, limit: $limit) {
+            id
+            name
+            russian
+            description
+            poster { mainUrl }
+          }
+        }
+        """
+        variables = {"search": query, "page": page, "limit": 10}
+        headers = {"User-Agent": "TabibitoHub/1.0"}
+        
         try:
-            response = requests.get(url)
+            response = requests.post(url, json={'query': query_str, 'variables': variables}, headers=headers)
             if response.status_code == 200:
-                for item in response.json().get('data', []):
-                    attrs = item.get('attributes', {})
-                    poster = attrs.get('posterImage', {}).get('medium', '') if attrs.get('posterImage') else ''
-                    desc = attrs.get('synopsis', '')
+                data = response.json().get('data', {}).get('animes', [])
+                for item in data:
+                    title = item.get('russian') or item.get('name') or 'Без названия'
+                    poster = item.get('poster', {}).get('mainUrl', '') if item.get('poster') else ''
+                    import re
+                    desc = re.sub('<[^<]+?>', '', item.get('description', '')) if item.get('description') else ''
+                    
                     results.append({
                         'api_id': str(item.get('id')), 
-                        'title': attrs.get('canonicalTitle', 'Без названия'), 
+                        'title': title, 
                         'poster_url': poster, 
                         'description': desc
                     })
         except Exception as e: 
-            print(f"Anime Error: {e}")
+            print(f"Shikimori Error: {e}")
 
     return jsonify(results)
 
