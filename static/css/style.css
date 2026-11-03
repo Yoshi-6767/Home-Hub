@@ -45,7 +45,7 @@ a:hover { color: var(--accent-hover); }
     justify-content: flex-start;
     align-items: center;
     padding: 0 32px;
-    height: 60px; /* Вот она, фиксированная высота шапки (было ~120px) */
+    height: 70px; /* Высота шапки (подбираем под размер лого) */
     background: rgba(18, 18, 18, 0.8);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
@@ -55,11 +55,9 @@ a:hover { color: var(--accent-hover); }
 }
 
 .logo-text-img {
-    height: 100px; /* Логотип остается большим */
+    height: 45px; /* Уменьшили картинку, чтобы она влезла в шапку ровно */
     object-fit: contain;
-    margin-left: 20px;
-    /* Опускаем логотип чуть ниже, чтобы он красиво свисал из шапки */
-    margin-top: 30px; 
+    margin-left: 0; /* Убрали сдвиг, он будет ровно по краю контейнера (padding: 32px) */
 }
 
 /* --- МАКЕТ --- */
