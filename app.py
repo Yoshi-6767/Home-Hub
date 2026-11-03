@@ -1,6 +1,7 @@
 import os
 import platform
 import uuid
+import requests
 from datetime import datetime, date
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -35,11 +36,11 @@ login_manager.login_view = 'login'
 # --- Модели ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False) # Логин/Почта
-    display_name = db.Column(db.String(50), nullable=False)          # Отображаемое имя
-    nickname = db.Column(db.String(50), nullable=True)               # Ник (для друзей, не меняется)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    display_name = db.Column(db.String(50), nullable=False)
+    nickname = db.Column(db.String(50), nullable=True)
     password_hash = db.Column(db.String(200), nullable=False)
-    avatar = db.Column(db.String(200), nullable=True) # По умолчанию пусто        # Аватарка
+    avatar = db.Column(db.String(200), nullable=True)
 
 class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -119,6 +120,20 @@ class Subscription(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class LibraryItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category = db.Column(db.String(20), nullable=False) # 'movie', 'tv', 'book', 'game'
+    api_id = db.Column(db.String(50), nullable=True) 
+    title = db.Column(db.String(200), nullable=False)
+    poster_url = db.Column(db.String(500), default='')
+    description = db.Column(db.Text, default='')
+    status = db.Column(db.String(20), default='want') # 'want', 'watching', 'completed'
+    rating = db.Column(db.Integer, default=0) # 0 значит без оценки, 1-10
+    review = db.Column(db.Text, default='')
+    top_rank = db.Column(db.Integer, default=0) # 0 значит не в топе, 1-10 место
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 @login_manager.user_loader
 def load_user(user_id):
     try:
@@ -178,7 +193,6 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    # Статистика
     purchases_count = ShoppingItem.query.join(ShoppingList).filter(ShoppingList.user_id == current_user.id, ShoppingItem.done == True).count()
     notes_count = Note.query.filter_by(user_id=current_user.id, deleted=False).count()
     events_count = Event.query.filter_by(user_id=current_user.id).count()
@@ -372,7 +386,7 @@ def calendar_add_event():
 def calendar_categories():
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
-        color = request.form.get('color', '#FF6B00')
+        color = request.form.get('color', '#E53935')
         if name:
             db.session.add(Category(name=name, color=color, user_id=current_user.id))
             db.session.commit()
@@ -471,6 +485,97 @@ def sub_add():
             db.session.commit()
         except ValueError: pass
     return redirect(url_for('subscriptions'))
+
+@app.route('/subscriptions/delete/<int:sub_id>', methods=['POST'])
+@login_required
+def sub_delete(sub_id):
+    sub = Subscription.query.filter_by(id=sub_id, user_id=current_user.id).first_or_404()
+    db.session.delete(sub)
+    db.session.commit()
+    return redirect(url_for('subscriptions'))
+
+# --- БИБЛИОТЕКА ---
+TMDB_TOKEN = os.environ.get("TMDB_TOKEN")
+
+@app.route('/library/search', methods=['GET'])
+@login_required
+def library_search():
+    query = request.args.get('q', '').strip()
+    category = request.args.get('category', 'movie')
+    
+    if not query:
+        return jsonify({'error': 'Empty query'}), 400
+
+    results = []
+
+    if category in ['movie', 'tv']:
+        url = f"https://api.themoviedb.org/3/search/{category}?query={query}&language=ru-RU"
+        headers = {
+            "accept": "application/json",
+            "Authorization": f"Bearer {TMDB_TOKEN}"
+        }
+        try:
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                for item in data.get('results', [])[:10]:
+                    results.append({
+                        'api_id': str(item.get('id')),
+                        'title': item.get('title') or item.get('name'),
+                        'poster_url': f"https://image.tmdb.org/t/p/w500{item.get('poster_path')}" if item.get('poster_path') else '',
+                        'description': item.get('overview', '')
+                    })
+        except Exception as e:
+            print(f"Ошибка TMDB: {e}")
+
+    elif category == 'book':
+        url = f"https://www.googleapis.com/books/v1/volumes?q={query}&maxResults=10"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                for item in data.get('items', []):
+                    volume_info = item.get('volumeInfo', {})
+                    results.append({
+                        'api_id': item.get('id'),
+                        'title': volume_info.get('title'),
+                        'poster_url': volume_info.get('imageLinks', {}).get('thumbnail', ''),
+                        'description': volume_info.get('description', '')
+                    })
+        except Exception as e:
+            print(f"Ошибка Google Books: {e}")
+
+    return jsonify(results)
+
+@app.route('/library/add', methods=['POST'])
+@login_required
+def library_add():
+    data = request.json
+    if not data:
+        return jsonify({'error': 'No data'}), 400
+
+    existing = LibraryItem.query.filter_by(user_id=current_user.id, api_id=data.get('api_id'), category=data.get('category')).first()
+    if existing:
+        return jsonify({'status': 'exists'})
+
+    new_item = LibraryItem(
+        user_id=current_user.id,
+        category=data.get('category'),
+        api_id=data.get('api_id'),
+        title=data.get('title'),
+        poster_url=data.get('poster_url'),
+        description=data.get('description'),
+        status='want'
+    )
+    db.session.add(new_item)
+    db.session.commit()
+    return jsonify({'status': 'ok'})
+
+@app.route('/library')
+@login_required
+def library():
+    items = LibraryItem.query.filter_by(user_id=current_user.id).order_by(LibraryItem.created_at.desc()).all()
+    return render_template('library.html', items=items)
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
