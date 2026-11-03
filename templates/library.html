@@ -23,7 +23,6 @@
         <button class="btn-primary" onclick="startSearch()">Найти</button>
     </div>
     <div id="search-results" class="cards" style="margin-top: 24px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));"></div>
-    <!-- Кнопка показать больше -->
     <div id="load-more-container" style="text-align: center; margin-top: 24px; display: none;">
         <button class="btn-primary" onclick="loadMore()" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);">Показать больше</button>
     </div>
@@ -77,10 +76,11 @@ function switchTab(cat) {
     document.getElementById('tab-' + cat).classList.add('active');
     document.getElementById('top10-btn').href = `/library/${cat}/top10`;
 
-    // Очищаем поиск при смене вкладки (фикс бага)
+    // ФИКС: Полностью скрываем поиск и очищаем результаты при смене вкладки
     document.getElementById('search-block').style.display = 'none';
     document.getElementById('search-results').innerHTML = '';
     document.getElementById('load-more-container').style.display = 'none';
+    document.getElementById('search-query').value = '';
 
     document.querySelectorAll('.item-card').forEach(card => {
         card.style.display = (card.dataset.category === cat) ? 'flex' : 'none';
@@ -89,7 +89,6 @@ function switchTab(cat) {
 
 document.addEventListener('DOMContentLoaded', () => switchTab(currentCategory));
 
-// Начать новый поиск
 function startSearch() {
     currentQuery = document.getElementById('search-query').value.trim();
     if (!currentQuery) return;
@@ -98,13 +97,11 @@ function startSearch() {
     performSearch();
 }
 
-// Загрузить еще
 function loadMore() {
     currentPage++;
     performSearch();
 }
 
-// Сам поиск
 function performSearch() {
     const resultsGrid = document.getElementById('search-results');
     const loadMoreBtn = document.getElementById('load-more-container');
@@ -125,7 +122,6 @@ function performSearch() {
                 return; 
             }
 
-            // Показываем кнопку, если пришло ровно 10 результатов (значит, могут быть еще)
             if (data.length === 10) {
                 loadMoreBtn.style.display = 'block';
             } else {
