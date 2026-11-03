@@ -406,6 +406,7 @@ def sub_add():
 
 # --- БИБЛИОТЕКА ---
 TMDB_TOKEN = os.environ.get("TMDB_TOKEN")
+GOOGLE_BOOKS_KEY = os.environ.get("GOOGLE_BOOKS_KEY")
 
 @app.route('/library')
 @login_required
@@ -433,7 +434,7 @@ def library_search():
         except Exception as e: print(f"TMDB Error: {e}")
 
     elif category == 'book':
-        url = f"https://www.googleapis.com/books/v1/volumes?q={query}&maxResults=10"
+        url = f"https://www.googleapis.com/books/v1/volumes?q={query}&maxResults=10&key={GOOGLE_BOOKS_KEY}"
         try:
             response = requests.get(url)
             if response.status_code == 200:
