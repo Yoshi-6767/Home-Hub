@@ -3,21 +3,18 @@
 {% block content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
     <h1><i class="ph ph-books" style="color: var(--accent);"></i> Моя Библиотека</h1>
-    
-    <!-- Кнопка Топ-10, меняет ссылку в зависимости от вкладки -->
     <a href="/library/movie/top10" id="top10-btn" class="btn-primary" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);">
         <i class="ph ph-trophy"></i> Мой Топ-10
     </a>
 </div>
 
-<!-- Вкладки -->
 <div class="library-tabs" style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
     <button class="btn-nav active" onclick="switchTab('movie')" id="tab-movie">Фильмы</button>
     <button class="btn-nav" onclick="switchTab('tv')" id="tab-tv">Сериалы</button>
+    <button class="btn-nav" onclick="switchTab('anime')" id="tab-anime">Аниме</button>
     <button class="btn-nav" onclick="switchTab('book')" id="tab-book">Книги</button>
 </div>
 
-<!-- Форма поиска -->
 <button class="btn-primary" onclick="document.getElementById('search-block').style.display='block'" style="margin-bottom: 24px;">+ Добавить запись</button>
 
 <div id="search-block" style="display: none; background: var(--card-bg); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 32px;">
@@ -25,24 +22,18 @@
         <input type="text" id="search-query" placeholder="Введите название..." style="flex: 1;">
         <button class="btn-primary" onclick="doSearch()">Найти</button>
     </div>
-    <div id="search-results" class="cards" style="margin-top: 24px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
-        <!-- Результаты -->
-    </div>
+    <div id="search-results" class="cards" style="margin-top: 24px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));"></div>
 </div>
 
 <hr style="border-color: var(--border); margin: 32px 0;">
 
-<!-- Мои записи (сетка) -->
 <div class="cards" id="my-items" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); max-width: 100%;">
     {% for item in items %}
-    <!-- data-category скрывает лишние записи через JS -->
-    <div class="card item-card" data-category="{{ item.category }}" style="padding: 0; overflow: hidden; cursor: pointer;" onclick="window.location.href='/library/item/{{ item.id }}'">
+    <div class="card item-card" data-category="{{ item.category }}" style="padding: 0; overflow: hidden; cursor: pointer; display: none;" onclick="window.location.href='/library/item/{{ item.id }}'">
         {% if item.poster_url %}
             <img src="{{ item.poster_url }}" alt="poster" style="width: 100%; height: 280px; object-fit: cover; border-bottom: 1px solid var(--border);">
         {% else %}
-            <div style="width: 100%; height: 280px; background: var(--bg); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border);">
-                <i class="ph ph-image" style="font-size: 48px; color: var(--text-muted);"></i>
-            </div>
+            <div style="width: 100%; height: 280px; background: var(--bg); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border);"><i class="ph ph-image" style="font-size: 48px; color: var(--text-muted);"></i></div>
         {% endif %}
         
         <div style="padding: 16px;">
@@ -62,35 +53,22 @@
 <script>
 let currentCategory = 'movie';
 
-// Переключение вкладок
 function switchTab(cat) {
     currentCategory = cat;
-    
-    // Красим активную кнопку
     document.querySelectorAll('.library-tabs .btn-nav').forEach(btn => btn.classList.remove('active'));
     document.getElementById('tab-' + cat).classList.add('active');
-
-    // Меняем ссылку на Топ-10
     document.getElementById('top10-btn').href = `/library/${cat}/top10`;
-
-    // Скрываем/показываем карточки
+    
     document.querySelectorAll('.item-card').forEach(card => {
-        if (card.dataset.category === cat) {
-            card.style.display = 'flex';
-        } else {
-            card.style.display = 'none';
-        }
+        card.style.display = (card.dataset.category === cat) ? 'flex' : 'none';
     });
 }
 
-// При загрузке страницы сразу фильтруем (показываем только фильмы)
 document.addEventListener('DOMContentLoaded', () => switchTab('movie'));
 
-// Поиск
 function doSearch() {
     const query = document.getElementById('search-query').value.trim();
     if (!query) return;
-
     const resultsGrid = document.getElementById('search-results');
     resultsGrid.innerHTML = '<p>Ищем...</p>';
 
@@ -105,10 +83,7 @@ function doSearch() {
                 card.className = 'card';
                 card.style.padding = '0';
                 card.style.overflow = 'hidden';
-                
-                const imgHtml = item.poster_url 
-                    ? `<img src="${item.poster_url}" style="width: 100%; height: 250px; object-fit: cover; border-bottom: 1px solid var(--border);">`
-                    : `<div style="width: 100%; height: 250px; background: var(--bg); display: flex; align-items: center; justify-content: center;"><i class="ph ph-image" style="font-size: 48px;"></i></div>`;
+                const imgHtml = item.poster_url ? `<img src="${item.poster_url}" style="width: 100%; height: 250px; object-fit: cover; border-bottom: 1px solid var(--border);">` : `<div style="width: 100%; height: 250px; background: var(--bg); display: flex; align-items: center; justify-content: center;"><i class="ph ph-image" style="font-size: 48px;"></i></div>`;
 
                 card.innerHTML = `
                     ${imgHtml}
@@ -122,7 +97,6 @@ function doSearch() {
         });
 }
 
-// Добавление
 function addItem(api_id, title, poster_url, description) {
     fetch('/library/add', {
         method: 'POST',
