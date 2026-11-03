@@ -44,9 +44,11 @@ a:hover { color: var(--accent-hover); }
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 12px 32px;
-    background: transparent; /* Убрали черную полосу */
-    border-bottom: none;     /* Убрали линию */
+    padding: 16px 32px;
+    /* Полупрозрачный темный фон, как в Дипсике */
+    background: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -55,8 +57,7 @@ a:hover { color: var(--accent-hover); }
 .logo-text-img {
     height: 90px;       
     object-fit: contain;
-    margin-left: 20px;  /* Сдвинули немного вправо, чтобы не прилипало к краю */
-    margin-top: 8px;    /* Опустили чуть вниз, чтобы было ровно */
+    margin-left: -5px; /* Чуть сдвинули влево, чтобы выровнять с меню */
 }
 
 /* --- МАКЕТ --- */
@@ -65,7 +66,7 @@ a:hover { color: var(--accent-hover); }
     width: 100%;
     max-width: 1500px;
     margin: 0; 
-    padding: 32px;
+    padding: 24px 32px; /* Выровняли отступы по бокам */
     gap: 32px;
     flex: 1;
 }
