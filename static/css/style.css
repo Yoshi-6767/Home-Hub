@@ -44,7 +44,8 @@ a:hover { color: var(--accent-hover); }
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 4px 32px; /* Сделали полосу тоньше (было 16px) */
+    padding: 0 32px;
+    height: 60px; /* Вот она, фиксированная высота шапки (было ~120px) */
     background: rgba(18, 18, 18, 0.8);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
@@ -54,11 +55,11 @@ a:hover { color: var(--accent-hover); }
 }
 
 .logo-text-img {
-    height: 100px; /* Твой размер */
+    height: 100px; /* Логотип остается большим */
     object-fit: contain;
-    margin-left: 20px; /* Вот этот отступ двигает его вправо. Хочешь еще правее - ставь 30px */
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-left: 20px;
+    /* Опускаем логотип чуть ниже, чтобы он красиво свисал из шапки */
+    margin-top: 30px; 
 }
 
 /* --- МАКЕТ --- */
