@@ -404,8 +404,14 @@ def sub_add():
         db.session.commit()
     return redirect(url_for('subscriptions'))
 
-# --- БИБЛИОТЕКА (Общая страница) ---
+# --- БИБЛИОТЕКА ---
 TMDB_TOKEN = os.environ.get("TMDB_TOKEN")
+
+@app.route('/library')
+@login_required
+def library():
+    items = LibraryItem.query.filter_by(user_id=current_user.id).order_by(LibraryItem.created_at.desc()).all()
+    return render_template('library.html', items=items)
 
 @app.route('/library/search', methods=['GET'])
 @login_required
