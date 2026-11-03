@@ -55,7 +55,7 @@ a:hover { color: var(--accent-hover); }
 }
 
 .logo-text-img {
-    height: 75px; /* Увеличили с 60 до 75. Если мало - ставь 78 */
+    height: 83px; /* Увеличили с 60 до 75. Если мало - ставь 78 */
     object-fit: contain;
     margin-left: 20px;
 }
