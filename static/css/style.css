@@ -53,10 +53,9 @@ a:hover { color: var(--accent-hover); }
 }
 
 .logo-text-img {
-    height: 70px;       /* Сделали надпись больше (было 50px) */
-    margin-left: 40px;  /* Сдвинули вправо от левого края экрана */
-    margin-top: 10px;   /* Чуть опустили вниз для центрирования */
+    height: 80px; /* Вот тут размер. Если мало - ставь 60px или 70px */
     object-fit: contain;
+    margin-left: 10px;
 }
 
 /* --- МАКЕТ --- */
@@ -135,7 +134,7 @@ h1 { font-size: 32px; font-weight: 700; margin-bottom: 24px; color: #fff; displa
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     margin-top: 24px;
-    max-width: 1000px;
+    width: 100%;
 }
 
 .card {
