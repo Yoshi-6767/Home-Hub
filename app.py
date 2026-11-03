@@ -420,7 +420,9 @@ def library_search():
     query = request.args.get('q', '').strip()
     category = request.args.get('category', 'movie')
     
-    if not query: return jsonify({'error': 'Empty query'}), 400
+    if not query: 
+        return jsonify({'error': 'Empty query'}), 400
+    
     results = []
 
     if category in ['movie', 'tv']:
@@ -430,8 +432,14 @@ def library_search():
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
                 for item in response.json().get('results', [])[:10]:
-                    results.append({'api_id': str(item.get('id')), 'title': item.get('title') or item.get('name'), 'poster_url': f"https://image.tmdb.org/t/p/w500{item.get('poster_path')}" if item.get('poster_path') else '', 'description': item.get('overview', '')})
-        except Exception as e: print(f"TMDB Error: {e}")
+                    results.append({
+                        'api_id': str(item.get('id')), 
+                        'title': item.get('title') or item.get('name'), 
+                        'poster_url': f"https://image.tmdb.org/t/p/w500{item.get('poster_path')}" if item.get('poster_path') else '', 
+                        'description': item.get('overview', '')
+                    })
+        except Exception as e: 
+            print(f"TMDB Error: {e}")
 
     elif category == 'book':
         url = f"https://www.googleapis.com/books/v1/volumes?q={query}&maxResults=10&key={GOOGLE_BOOKS_KEY}"
@@ -440,11 +448,16 @@ def library_search():
             if response.status_code == 200:
                 for item in response.json().get('items', []):
                     vol = item.get('volumeInfo', {})
-                    results.append({'api_id': item.get('id'), 'title': vol.get('title', 'Без названия'), 'poster_url': vol.get('imageLinks', {}).get('thumbnail', ''), 'description': vol.get('description', '')})
-        except Exception as e: print(f"Books Error: {e}")
+                    results.append({
+                        'api_id': item.get('id'), 
+                        'title': vol.get('title', 'Без названия'), 
+                        'poster_url': vol.get('imageLinks', {}).get('thumbnail', ''), 
+                        'description': vol.get('description', '')
+                    })
+        except Exception as e: 
+            print(f"Books Error: {e}")
         
-        elif category == 'anime':
-        # Используем Kitsu API вместо Jikan
+    elif category == 'anime':
         url = f"https://kitsu.io/api/edge/anime?filter[text]={query}&page[limit]=10"
         try:
             response = requests.get(url)
@@ -459,20 +472,34 @@ def library_search():
                         'poster_url': poster, 
                         'description': desc
                     })
-        except Exception as e: print(f"Anime Error: {e}")
+        except Exception as e: 
+            print(f"Anime Error: {e}")
+
+    return jsonify(results)
+
 
 @app.route('/library/add', methods=['POST'])
 @login_required
 def library_add():
     data = request.json
-    if not data: return jsonify({'error': 'No data'}), 400
+    if not data: 
+        return jsonify({'error': 'No data'}), 400
 
     if LibraryItem.query.filter_by(user_id=current_user.id, api_id=data.get('api_id'), category=data.get('category')).first():
         return jsonify({'status': 'exists'})
 
-    db.session.add(LibraryItem(user_id=current_user.id, category=data.get('category'), api_id=data.get('api_id'), title=data.get('title'), poster_url=data.get('poster_url'), description=data.get('description'), status='want'))
+    db.session.add(LibraryItem(
+        user_id=current_user.id, 
+        category=data.get('category'), 
+        api_id=data.get('api_id'), 
+        title=data.get('title'), 
+        poster_url=data.get('poster_url'), 
+        description=data.get('description'), 
+        status='want'
+    ))
     db.session.commit()
     return jsonify({'status': 'ok'})
+
 
 @app.route('/library/item/<int:item_id>', methods=['GET', 'POST'])
 @login_required
@@ -488,18 +515,24 @@ def library_item(item_id):
         return redirect(url_for('library_item', item_id=item.id))
     return render_template('library_item.html', item=item)
 
+
 @app.route('/library/item/<int:item_id>/delete', methods=['POST'])
 @login_required
 def library_item_delete(item_id):
     item = LibraryItem.query.filter_by(id=item_id, user_id=current_user.id).first_or_404()
-    db.session.delete(item); db.session.commit()
+    db.session.delete(item)
+    db.session.commit()
     return redirect(url_for('library'))
+
 
 @app.route('/library/<cat_code>/top10')
 @login_required
 def library_top10(cat_code):
-    # Берем только те записи, у которых top_rank больше 0 (то есть они реально в топе)
-    items = LibraryItem.query.filter(LibraryItem.user_id == current_user.id, LibraryItem.category == cat_code, LibraryItem.top_rank > 0).order_by(LibraryItem.top_rank.asc()).all()
+    items = LibraryItem.query.filter(
+        LibraryItem.user_id == current_user.id, 
+        LibraryItem.category == cat_code, 
+        LibraryItem.top_rank > 0
+    ).order_by(LibraryItem.top_rank.asc()).all()
     return render_template('library_top10.html', items=items, cat_code=cat_code)
 
 
@@ -508,9 +541,12 @@ def uploaded_file(filename):
     from flask import send_from_directory
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+
 @app.route('/recipes')
 @login_required
-def recipes(): return render_template('recipes.html')
+def recipes(): 
+    return render_template('recipes.html')
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
