@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="/profile" class="btn-primary" style="background: transparent; border: 1px solid var(--border); color: var(--text); margin-bottom: 24px;"><i class="ph ph-arrow-left"></i> Назад в профиль</a>
+<h1>Настройки профиля</h1>
+
+<div style="background: var(--card-bg); padding: 32px; border-radius: var(--radius); max-width: 600px;">
+    <form method="POST" action="/profile/upload-avatar" enctype="multipart/form-data" style="margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border);">
+        <label style="display: block; margin-bottom: 12px; font-weight: 600;">Твоя Аватарка</label>
+        <div style="display: flex; align-items: center; gap: 24px;">
+            {% if current_user.avatar %}
+                <img src="/uploads/{{ current_user.avatar }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover;">
+            {% else %}
+                <div style="width: 80px; height: 80px; border-radius: 12px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold;">{{ current_user.display_name[0]|upper }}</div>
+            {% endif %}
+            <div>
+                <input type="file" name="avatar" accept="image/*" required style="color: var(--text-muted); margin-bottom: 8px;">
+                <button type="submit" class="btn-primary" style="padding: 8px 16px; font-size: 12px;">Загрузить</button>
+            </div>
+        </div>
+    </form>
+
+    <form method="POST" action="/profile/save_settings">
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Твоё Имя</label>
+            <input type="text" name="display_name" value="{{ current_user.display_name }}" required style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px;">
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Страна</label>
+            <input type="text" name="country" value="{{ current_user.country }}" placeholder="Например: Россия, Япония" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px;">
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">О себе (цитата, статус)</label>
+            <textarea name="bio" rows="3" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; resize: vertical;">{{ current_user.bio }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%;">Сохранить изменения</button>
+    </form>
+</div>
+{% endblock %}
