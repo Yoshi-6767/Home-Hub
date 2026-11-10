@@ -5,55 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabibito</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <header class="top-header">
-        <div class="header-left">
-            <a href="/" class="logo-link">
-                <img src="{{ url_for('static', filename='logo_text.png') }}" alt="Tabibito" class="logo-text-img">
-            </a>
-        </div>
+        <a href="/" class="logo-link">
+            <img src="{{ url_for('static', filename='logo_text.png') }}" alt="Tabibito" class="logo-text-img">
+        </a>
     </header>
 
     <div class="layout">
-        <aside class="sidebar" role="main">
-            <!-- Профиль -->
+        <aside class="sidebar">
+            <!-- Профиль наверху -->
             <div class="profile-block" onclick="window.location.href='/profile'">
                 {% if current_user.avatar %}
-                    <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                    <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                 {% else %}
-                    <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold;">
                         {{ current_user.display_name[0]|upper }}
                     </div>
                 {% endif %}
                 <div class="profile-info">
-                    <div class="profile-name" style="font-weight: 600; font-size: 15px; color: #fff;">{{ current_user.display_name }}</div>
-                    <div class="profile-status" style="font-size: 12px; color: var(--text-muted);">@{{ current_user.nickname }}</div>
+                    <div class="profile-name">{{ current_user.display_name }}</div>
+                    <div class="profile-status">@{{ current_user.nickname }}</div>
                 </div>
             </div>
 
             <nav class="nav-menu">
                 <a href="/" class="nav-item"><i class="ph ph-house"></i> Главная</a>
                 <a href="/friends" class="nav-item"><i class="ph ph-users"></i> Друзья</a>
+                <a href="/chat" class="nav-item"><i class="ph ph-chat-teardrop"></i> Чат</a>
+                <a href="/library" class="nav-item"><i class="ph ph-books"></i> Библиотека</a>
                 <a href="/shopping" class="nav-item"><i class="ph ph-shopping-cart"></i> Покупки</a>
                 <a href="/wishes" class="nav-item"><i class="ph ph-gift"></i> Желания</a>
                 <a href="/calendar" class="nav-item"><i class="ph ph-calendar"></i> Календарь</a>
                 <a href="/notes" class="nav-item"><i class="ph ph-note"></i> Заметки</a>
-                <a href="/library" class="nav-item"><i class="ph ph-books"></i> Библиотека</a>
                 <a href="/subscriptions" class="nav-item"><i class="ph ph-credit-card"></i> Подписки</a>
                 <a href="/recipes" class="nav-item"><i class="ph ph-cooking-pot"></i> Рецепты</a>
             </nav>
+            
+            <div style="margin-top: auto; padding-top: 16px;">
+                <a href="/logout" class="nav-item" style="color: #E53935;"><i class="ph ph-sign-out"></i> Выйти</a>
+            </div>
         </aside>
 
         <main class="content">
             {% block content %}{% endblock %}
         </main>
     </div>
-
-    <footer class="footer">
-        Разработано <a href="#">Osaka Group</a> © 2026
-    </footer>
 </body>
 </html>
