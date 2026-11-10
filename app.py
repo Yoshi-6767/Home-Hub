@@ -225,6 +225,11 @@ def profile():
     subs_sum = sum(sub.price for sub in Subscription.query.filter_by(user_id=current_user.id).all() if sub.period == 'monthly')
     return render_template('profile.html', purchases_count=purchases_count, notes_count=notes_count, events_count=events_count, subs_sum=subs_sum)
 
+@app.route('/profile/settings')
+@login_required
+def profile_settings():
+    return render_template('profile_settings.html')
+
 @app.route('/profile/update', methods=['POST'])
 @login_required
 def profile_update():
