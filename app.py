@@ -2,6 +2,8 @@ import os
 import platform
 import uuid
 import requests
+from flask_socketio import SocketIO, emit
+import eventlet
 from datetime import datetime, date
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -32,6 +34,8 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # --- Модели ---
 class User(UserMixin, db.Model):
@@ -133,6 +137,31 @@ class LibraryItem(db.Model):
     review = db.Column(db.Text, default='')
     top_rank = db.Column(db.Integer, default=0) 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class FriendRequest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    status = db.Column(db.String(20), default='pending') # pending, accepted
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class BlockedUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    blocker_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    blocked_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    is_edited = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Связи для удобного вывода имени и аватарки
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_messages')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -568,4 +597,4 @@ def recipes():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=False, host='0.0.0.0', port=port)
+    socketio.run(app, debug=False, host='0.0.0.0', port=port)
