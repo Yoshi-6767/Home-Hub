@@ -16,8 +16,8 @@
     </header>
 
     <div class="layout">
+        <!-- Сайдбар -->
         <aside class="sidebar">
-            <!-- Профиль наверху -->
             <div class="profile-block" onclick="window.location.href='/profile'">
                 {% if current_user.avatar %}
                     <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
@@ -50,15 +50,15 @@
             </div>
         </aside>
 
-        <main class="content">
-            {% block content %}{% endblock %}
-        </main>
+        <!-- Правая часть (Контент + Футер) -->
+        <div class="right-side">
+            <main class="content">
+                {% block content %}{% endblock %}
+            </main>
+            <footer class="footer">
+                Разработано <a href="#">Osaka Group</a> © 2026
+            </footer>
+        </div>
     </div>
-
-    </div> <!-- Конец layout -->
-
-    <footer class="footer">
-        Разработано <a href="#">Osaka Group</a> © 2026
-    </footer>
 </body>
 </html>
