@@ -4,40 +4,50 @@
 <h1>Привет, {{ current_user.display_name }}!</h1>
 
 <div class="cards">
+    <a href="/friends" class="card">
+        <i class="ph ph-users card-icon"></i>
+        <div class="card-title">Друзья</div>
+        <div class="card-desc">Твои контакты</div>
+    </a>
+    <a href="/chat" class="card">
+        <i class="ph ph-chat-teardrop card-icon"></i>
+        <div class="card-title">Чат</div>
+        <div class="card-desc">Сообщения</div>
+    </a>
+    <a href="/library" class="card">
+        <i class="ph ph-books card-icon"></i>
+        <div class="card-title">Библиотека</div>
+        <div class="card-desc">Фильмы, книги, аниме</div>
+    </a>
     <a href="/shopping" class="card">
-        <div class="card-icon"><i class="ph ph-shopping-cart"></i></div>
+        <i class="ph ph-shopping-cart card-icon"></i>
         <div class="card-title">Покупки</div>
-        <div class="card-desc">Список покупок</div>
+        <div class="card-desc">Списки продуктов</div>
     </a>
     <a href="/wishes" class="card">
-        <div class="card-icon"><i class="ph ph-gift"></i></div>
+        <i class="ph ph-gift card-icon"></i>
         <div class="card-title">Желания</div>
-        <div class="card-desc">Что хотим</div>
+        <div class="card-desc">Что хочешь купить</div>
     </a>
     <a href="/calendar" class="card">
-        <div class="card-icon"><i class="ph ph-calendar"></i></div>
+        <i class="ph ph-calendar card-icon"></i>
         <div class="card-title">Календарь</div>
         <div class="card-desc">События и даты</div>
     </a>
     <a href="/notes" class="card">
-        <div class="card-icon"><i class="ph ph-note"></i></div>
+        <i class="ph ph-note card-icon"></i>
         <div class="card-title">Заметки</div>
         <div class="card-desc">Твои записи</div>
     </a>
-    <a href="/library" class="card">
-        <div class="card-icon"><i class="ph ph-books"></i></div>
-        <div class="card-title">Библиотека</div>
-        <div class="card-desc">Фильмы, книги и игры</div>
-    </a>
     <a href="/subscriptions" class="card">
-        <div class="card-icon"><i class="ph ph-credit-card"></i></div>
+        <i class="ph ph-credit-card card-icon"></i>
         <div class="card-title">Подписки</div>
-        <div class="card-desc">Твои платежи</div>
+        <div class="card-desc">Платежи</div>
     </a>
     <a href="/recipes" class="card">
-        <div class="card-icon"><i class="ph ph-cooking-pot"></i></div>
+        <i class="ph ph-cooking-pot card-icon"></i>
         <div class="card-title">Рецепты</div>
-        <div class="card-desc">Свои рецепты</div>
+        <div class="card-desc">Кулинарная книга</div>
     </a>
 </div>
 {% endblock %}
