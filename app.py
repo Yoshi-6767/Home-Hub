@@ -594,6 +594,96 @@ def uploaded_file(filename):
 def recipes(): 
     return render_template('recipes.html')
 
+# --- ДРУЗЬЯ ---
+@app.route('/friends')
+@login_required
+def friends():
+    # Мои друзья (принятые заявки, где я отправитель или получатель)
+    my_friends = User.query.join(FriendRequest, 
+        ((FriendRequest.sender_id == User.id) & (FriendRequest.receiver_id == current_user.id)) |
+        ((FriendRequest.receiver_id == User.id) & (FriendRequest.sender_id == current_user.id))
+    ).filter(FriendRequest.status == 'accepted').all()
+
+    # Входящие заявки (ждут моего подтверждения)
+    incoming_reqs = FriendRequest.query.filter_by(receiver_id=current_user.id, status='pending').all()
+    
+    # Исходящие заявки (я отправил, но еще не приняли)
+    outgoing_reqs = FriendRequest.query.filter_by(sender_id=current_user.id, status='pending').all()
+
+    # Кого я заблокировал
+    blocked_users = User.query.join(BlockedUser, BlockedUser.blocked_id == User.id).filter(BlockedUser.blocker_id == current_user.id).all()
+
+    return render_template('friends.html', my_friends=my_friends, incoming_reqs=incoming_reqs, outgoing_reqs=outgoing_reqs, blocked_users=blocked_users)
+
+@app.route('/friends/add', methods=['POST'])
+@login_required
+def friends_add():
+    nickname = request.form.get('nickname', '').strip().replace('@', '')
+    user_to_add = User.query.filter_by(nickname=nickname).first()
+
+    if not user_to_add:
+        flash('Пользователь с таким ником не найден', 'error')
+    elif user_to_add.id == current_user.id:
+        flash('Ты не можешь добавить самого себя', 'error')
+    else:
+        # Проверяем, нет ли уже заявки в любом направлении
+        existing_req = FriendRequest.query.filter(
+            ((FriendRequest.sender_id == current_user.id) & (FriendRequest.receiver_id == user_to_add.id)) |
+            ((FriendRequest.sender_id == user_to_add.id) & (FriendRequest.receiver_id == current_user.id))
+        ).first()
+
+        if existing_req:
+            flash('Заявка уже отправлена или вы уже друзья', 'error')
+        else:
+            db.session.add(FriendRequest(sender_id=current_user.id, receiver_id=user_to_add.id))
+            db.session.commit()
+            flash('Заявка в друзья отправлена!', 'success')
+
+    return redirect(url_for('friends'))
+
+@app.route('/friends/accept/<int:req_id>', methods=['POST'])
+@login_required
+def friends_accept(req_id):
+    req = FriendRequest.query.get_or_404(req_id)
+    if req.receiver_id == current_user.id:
+        req.status = 'accepted'
+        db.session.commit()
+    return redirect(url_for('friends'))
+
+@app.route('/friends/reject/<int:req_id>', methods=['POST'])
+@login_required
+def friends_reject(req_id):
+    req = FriendRequest.query.get_or_404(req_id)
+    # Отклонить может либо получатель, либо отправитель (отменить свою заявку)
+    if req.receiver_id == current_user.id or req.sender_id == current_user.id:
+        db.session.delete(req)
+        db.session.commit()
+    return redirect(url_for('friends'))
+
+@app.route('/friends/block/<int:user_id>', methods=['POST'])
+@login_required
+def friends_block(user_id):
+    if user_id != current_user.id:
+        # Удаляем из друзей/заявок перед блокировкой
+        FriendRequest.query.filter(
+            ((FriendRequest.sender_id == current_user.id) & (FriendRequest.receiver_id == user_id)) |
+            ((FriendRequest.sender_id == user_id) & (FriendRequest.receiver_id == current_user.id))
+        ).delete()
+        
+        db.session.add(BlockedUser(blocker_id=current_user.id, blocked_id=user_id))
+        db.session.commit()
+        flash('Пользователь заблокирован', 'success')
+    return redirect(url_for('friends'))
+
+@app.route('/friends/unblock/<int:user_id>', methods=['POST'])
+@login_required
+def friends_unblock(user_id):
+    block = BlockedUser.query.filter_by(blocker_id=current_user.id, blocked_id=user_id).first()
+    if block:
+        db.session.delete(block)
+        db.session.commit()
+    return redirect(url_for('friends'))
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
