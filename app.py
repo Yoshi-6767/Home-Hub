@@ -45,6 +45,8 @@ class User(UserMixin, db.Model):
     nickname = db.Column(db.String(50), nullable=True)
     password_hash = db.Column(db.String(200), nullable=False)
     avatar = db.Column(db.String(200), nullable=True)
+    bio = db.Column(db.Text, default='')       # НОВОЕ: О себе
+    country = db.Column(db.String(50), default='') # НОВОЕ: Страна
 
 class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -221,6 +223,17 @@ def profile_update():
     if request.form.get('display_name', '').strip():
         current_user.display_name = request.form.get('display_name').strip()
         db.session.commit(); flash('Имя изменено!', 'success')
+    return redirect(url_for('profile'))
+
+@app.route('/profile/save_settings', methods=['POST'])
+@login_required
+def profile_save_settings():
+    # Сохраняем имя, страну и био
+    current_user.display_name = request.form.get('display_name', '').strip()
+    current_user.country = request.form.get('country', '').strip()
+    current_user.bio = request.form.get('bio', '').strip()
+    db.session.commit()
+    flash('Профиль успешно обновлен!', 'success')
     return redirect(url_for('profile'))
 
 @app.route('/profile/upload-avatar', methods=['POST'])
@@ -683,6 +696,17 @@ def friends_unblock(user_id):
         db.session.delete(block)
         db.session.commit()
     return redirect(url_for('friends'))
+
+@app.route('/update-db-for-profile')
+def update_db():
+    from sqlalchemy import text
+    try:
+        db.session.execute(text("ALTER TABLE user ADD COLUMN bio TEXT DEFAULT ''"))
+        db.session.execute(text("ALTER TABLE user ADD COLUMN country VARCHAR(50) DEFAULT ''"))
+        db.session.commit()
+        return "База обновлена! Поля bio и country добавлены."
+    except Exception as e:
+        return f"Ошибка (возможно, поля уже есть): {e}"
 
 
 if __name__ == '__main__':
