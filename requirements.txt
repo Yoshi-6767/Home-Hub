@@ -2,3 +2,5 @@ flask
 flask-sqlalchemy
 flask-login
 requests
+flask-socketio
+eventlet
