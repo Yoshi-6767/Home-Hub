@@ -7,7 +7,7 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
-      <div style="background: {% if category == 'error' %}#331111{% else %}#113311{% endif %}; color: {% if category == 'error' %}#ff4444{% else %}#44ff44{% endif %}; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid {% if category == 'error' %}#551111{% else %}#115511{% endif %};">
+      <div style="background: {% if category == 'error' %}#331111{% else %}#113311{% endif %}; color: {% if category == 'error' %}#ff4444{% else %}#44ff44{% endif %}; padding: 12px 16px; border-radius: var(--radius); margin-bottom: 24px; border: 1px solid {% if category == 'error' %}#551111{% else %}#115511{% endif %};">
         {{ message }}
       </div>
     {% endfor %}
@@ -15,25 +15,25 @@
 {% endwith %}
 
 <!-- Форма добавления друга -->
-<div style="background: var(--card-bg); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 32px;">
-    <h2 style="font-size: 18px; margin-bottom: 16px;">Найти пользователя</h2>
+<div style="background: var(--card-bg); padding: 24px; border-radius: var(--radius); margin-bottom: 32px;">
+    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text);">Найти пользователя</h2>
     <form method="POST" action="/friends/add" class="add-form" style="margin-bottom: 0;">
-        <input type="text" name="nickname" placeholder="Введите ник" required style="flex: 1;">
+        <input type="text" name="nickname" placeholder="Введите ник" required style="flex: 1; max-width: 400px;">
         <button type="submit" class="btn-primary">Отправить заявку</button>
     </form>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 32px;">
     
     <!-- Левая колонка -->
     <div>
         <!-- Входящие заявки -->
-        <h2 style="font-size: 20px; margin-bottom: 16px;">Входящие заявки</h2>
+        <h2 style="font-size: 20px; margin-bottom: 16px; color: var(--text);">Входящие заявки</h2>
         {% if incoming_reqs %}
             {% for req in incoming_reqs %}
-            <div class="list-card" style="display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px;">
+            <div class="list-card">
                 <div>
-                    <div style="font-weight: 600; font-size: 16px;">{{ req.sender.display_name }}</div>
+                    <div style="font-weight: 600; font-size: 16px; color: var(--text);">{{ req.sender.display_name }}</div>
                     <div style="font-size: 12px; color: var(--text-muted);">@{{ req.sender.nickname }}</div>
                 </div>
                 <div style="display: flex; gap: 8px;">
@@ -47,16 +47,16 @@
             </div>
             {% endfor %}
         {% else %}
-            <p class="empty" style="margin-bottom: 32px;">Входящих заявок нет.</p>
+            <p class="empty" style="margin-bottom: 32px; color: var(--text-muted);">Входящих заявок нет.</p>
         {% endif %}
 
         <!-- Исходящие заявки -->
-        <h2 style="font-size: 20px; margin-bottom: 16px; margin-top: 32px;">Исходящие заявки</h2>
+        <h2 style="font-size: 20px; margin-bottom: 16px; margin-top: 32px; color: var(--text);">Исходящие заявки</h2>
         {% if outgoing_reqs %}
             {% for req in outgoing_reqs %}
-            <div class="list-card" style="display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px;">
+            <div class="list-card">
                 <div>
-                    <div style="font-weight: 600; font-size: 16px;">{{ req.receiver.display_name }}</div>
+                    <div style="font-weight: 600; font-size: 16px; color: var(--text);">{{ req.receiver.display_name }}</div>
                     <div style="font-size: 12px; color: var(--text-muted);">@{{ req.receiver.nickname }} (Ждем ответа)</div>
                 </div>
                 <form method="POST" action="/friends/reject/{{ req.id }}">
@@ -65,18 +65,18 @@
             </div>
             {% endfor %}
         {% else %}
-            <p class="empty">Исходящих заявок нет.</p>
+            <p class="empty" style="color: var(--text-muted);">Исходящих заявок нет.</p>
         {% endif %}
     </div>
 
     <!-- Правая колонка -->
     <div>
         <!-- Мои друзья -->
-        <h2 style="font-size: 20px; margin-bottom: 16px;">Мои друзья ({{ my_friends|length }})</h2>
+        <h2 style="font-size: 20px; margin-bottom: 16px; color: var(--text);">Мои друзья ({{ my_friends|length }})</h2>
         {% if my_friends %}
             <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px;">
                 {% for friend in my_friends %}
-                <div class="list-card" style="display: flex; justify-content: space-between; align-items: center; padding: 16px;">
+                <div class="list-card">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         {% if friend.avatar %}
                             <img src="/uploads/{{ friend.avatar }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
@@ -86,28 +86,27 @@
                             </div>
                         {% endif %}
                         <div>
-                            <div style="font-weight: 600; font-size: 16px;">{{ friend.display_name }}</div>
+                            <div style="font-weight: 600; font-size: 16px; color: var(--text);">{{ friend.display_name }}</div>
                             <div style="font-size: 12px; color: var(--text-muted);">@{{ friend.nickname }}</div>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 8px;">
-                        <a href="/chat/{{ friend.nickname }}" class="btn-primary" style="padding: 8px 12px; font-size: 12px; text-decoration: none;">Написать</a>
-                        <form method="POST" action="/friends/block/{{ friend.id }}">
-                            <button type="submit" class="btn-delete" title="Заблокировать" onclick="return confirm('Заблокировать пользователя?')"><i class="ph ph-prohibit"></i></button>
-                        </form>
+                    <div>
+                        <a href="/chat/{{ friend.nickname }}" class="btn-primary" style="padding: 8px 12px; font-size: 12px; text-decoration: none;">
+                            <i class="ph ph-chat-teardrop"></i> Написать
+                        </a>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <p class="empty" style="margin-bottom: 32px;">У тебя пока нет друзей. Найди кого-нибудь по нику!</p>
+            <p class="empty" style="margin-bottom: 32px; color: var(--text-muted);">У тебя пока нет друзей. Найди кого-нибудь по нику!</p>
         {% endif %}
 
         <!-- Черный список -->
         <h2 style="font-size: 20px; margin-bottom: 16px; color: #E53935;">Заблокированные</h2>
         {% if blocked_users %}
             {% for user in blocked_users %}
-            <div class="list-card" style="display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px; border-color: #551111;">
+            <div class="list-card" style="border: 1px solid #331111;">
                 <div>
                     <div style="font-weight: 600; font-size: 16px; color: var(--text-muted);">{{ user.display_name }}</div>
                     <div style="font-size: 12px; color: var(--text-muted);">@{{ user.nickname }}</div>
@@ -118,7 +117,7 @@
             </div>
             {% endfor %}
         {% else %}
-            <p class="empty">Никого не блокировал.</p>
+            <p class="empty" style="color: var(--text-muted);">Никого не блокировал.</p>
         {% endif %}
     </div>
 </div>
