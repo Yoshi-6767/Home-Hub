@@ -697,17 +697,6 @@ def friends_unblock(user_id):
         db.session.commit()
     return redirect(url_for('friends'))
 
-@app.route('/update-db-for-profile')
-def update_db():
-    from sqlalchemy import text
-    try:
-        db.session.execute(text("ALTER TABLE user ADD COLUMN bio TEXT DEFAULT ''"))
-        db.session.execute(text("ALTER TABLE user ADD COLUMN country VARCHAR(50) DEFAULT ''"))
-        db.session.commit()
-        return "База обновлена! Поля bio и country добавлены."
-    except Exception as e:
-        return f"Ошибка (возможно, поля уже есть): {e}"
-
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
