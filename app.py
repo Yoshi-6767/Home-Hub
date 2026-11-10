@@ -174,6 +174,14 @@ def load_user(user_id):
 
 with app.app_context():
     db.create_all()
+    # Автоматическое добавление новых колонок для профиля
+    try:
+        from sqlalchemy import text
+        db.session.execute(text("ALTER TABLE user ADD COLUMN bio TEXT DEFAULT ''"))
+        db.session.execute(text("ALTER TABLE user ADD COLUMN country VARCHAR(50) DEFAULT ''"))
+        db.session.commit()
+    except Exception:
+        pass # Если колонки уже есть, пропускаем
 
 # --- АВТОРИЗАЦИЯ ---
 @app.route('/login', methods=['GET', 'POST'])
