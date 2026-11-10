@@ -1,57 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Твой Профиль</h1>
-<p class="subtitle">Управляй своим аккаунтом и смотри стату</p>
-
-<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px;">
+<div class="steam-profile">
+    <!-- Баннер (пока просто градиент) -->
+    <div class="steam-banner"></div>
     
-    <!-- Левая колонка: Аватар и Имя -->
-    <div style="background: var(--card-bg); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); text-align: center;">
-        <img src="/uploads/{{ current_user.avatar }}" alt="ava" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #333; margin-bottom: 16px; border: 3px solid var(--accent);">
-        
-        <form method="POST" action="/profile/upload-avatar" enctype="multipart/form-data" style="margin-bottom: 24px;">
-            <input type="file" name="avatar" accept="image/*" required style="font-size: 12px; margin-bottom: 8px; color: var(--text-muted);">
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 8px;">Загрузить аву</button>
-        </form>
-
-        <form method="POST" action="/profile/update" style="text-align: left;">
-            <label style="font-size: 12px; color: var(--text-muted);">Твоё Имя</label>
-            <input type="text" name="display_name" value="{{ current_user.display_name }}" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); margin-bottom: 12px; margin-top: 4px;">
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 8px;">Сохранить имя</button>
-        </form>
-
-        <div style="margin-top: 16px; font-size: 12px; color: var(--text-muted);">
-            Твой Ник (нельзя менять):<br><strong>@{{ current_user.nickname }}</strong>
+    <div class="steam-info">
+        <div class="steam-avatar-container">
+            {% if current_user.avatar %}
+                <img src="/uploads/{{ current_user.avatar }}" class="steam-avatar">
+            {% else %}
+                <div class="steam-avatar" style="display: flex; align-items: center; justify-content: center; font-size: 64px; font-weight: bold; color: #fff; background: var(--accent);">
+                    {{ current_user.display_name[0]|upper }}
+                </div>
+            {% endif %}
         </div>
-    </div>
 
-    <!-- Правая колонка: Статистика -->
-    <div>
-        <h2 style="font-size: 20px; margin-bottom: 16px;">Твоя Статистика</h2>
-        <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
-            <div class="card" style="cursor: default;">
-                <div class="card-icon">🛒</div>
-                <div class="card-title">{{ purchases_count }} шт.</div>
-                <div class="card-desc">Покупок выполнено</div>
+        <div class="steam-details">
+            <div class="steam-name">
+                {{ current_user.display_name }}
+                <a href="/profile/settings" class="btn-primary" style="font-size: 14px; padding: 8px 16px;">Редактировать профиль</a>
             </div>
-            <div class="card" style="cursor: default;">
-                <div class="card-icon">📝</div>
-                <div class="card-title">{{ notes_count }} шт.</div>
-                <div class="card-desc">Заметок создано</div>
+            
+            <div class="steam-country">
+                <i class="ph ph-globe"></i> 
+                {% if current_user.country %}{{ current_user.country }}{% else %}Страна не указана{% endif %}
+                <span style="margin-left: 16px;">@{{ current_user.nickname }}</span>
             </div>
-            <div class="card" style="cursor: default;">
-                <div class="card-icon">📅</div>
-                <div class="card-title">{{ events_count }} шт.</div>
-                <div class="card-desc">Событий в календаре</div>
-            </div>
-            <div class="card" style="cursor: default;">
-                <div class="card-icon">💳</div>
-                <div class="card-title">{{ "%.0f"|format(subs_sum) }} ₽</div>
-                <div class="card-desc">Тратишь на подписки в месяц</div>
+
+            <div class="steam-bio">
+                {% if current_user.bio %}
+                    "{{ current_user.bio }}"
+                {% else %}
+                    Пользователь пока ничего о себе не написал.
+                {% endif %}
             </div>
         </div>
     </div>
+</div>
 
+<h2 style="font-size: 24px; margin-bottom: 16px;">Твоя Статистика</h2>
+<div class="cards" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+    <div class="card">
+        <i class="ph ph-shopping-cart card-icon"></i>
+        <div class="card-title">{{ purchases_count }} шт.</div>
+        <div class="card-desc">Покупок выполнено</div>
+    </div>
+    <div class="card">
+        <i class="ph ph-note card-icon"></i>
+        <div class="card-title">{{ notes_count }} шт.</div>
+        <div class="card-desc">Заметок создано</div>
+    </div>
+    <div class="card">
+        <i class="ph ph-calendar card-icon"></i>
+        <div class="card-title">{{ events_count }} шт.</div>
+        <div class="card-desc">Событий в календаре</div>
+    </div>
+    <div class="card">
+        <i class="ph ph-credit-card card-icon"></i>
+        <div class="card-title">{{ "%.0f"|format(subs_sum) }} ₽</div>
+        <div class="card-desc">Тратишь на подписки</div>
+    </div>
 </div>
 {% endblock %}
