@@ -44,7 +44,13 @@ body {
 }
 
 /* --- МАКЕТ --- */
-.layout { display: flex; width: 100%; max-width: 1600px; margin: 0; flex: 1; }
+.layout {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    flex: 1; 
+    /* Убрали max-width, чтобы сайт заполнял всю ширину экрана */
+}
 
 /* --- САЙДБАР --- */
 .sidebar {
@@ -55,9 +61,7 @@ body {
     flex-direction: column;
     padding: 20px 12px;
     flex-shrink: 0;
-    height: calc(100vh - 80px);
-    position: sticky;
-    top: 80px;
+    /* Убрали жесткую высоту и sticky, теперь он будет тянуться до самого футера */
 }
 
 .profile-block { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 16px; border-radius: var(--radius); cursor: pointer; transition: 0.2s; }
