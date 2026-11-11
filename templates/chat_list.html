@@ -3,15 +3,15 @@
 {% block content %}
 <h1><i class="ph ph-chat-teardrop" style="color: var(--accent);"></i> Чаты</h1>
 
-<div style="max-width: 800px;">
+<div style="max-width: 800px; display: flex; flex-direction: column; gap: 12px;">
     {% if partners %}
         {% for user in partners %}
-        <a href="/chat/{{ user.nickname }}" class="list-card" style="text-decoration: none;">
-            <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="/chat/{{ user.nickname }}" class="list-card" style="text-decoration: none; display: flex; align-items: center; justify-content: space-between; padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
                 {% if user.avatar %}
-                    <img src="/uploads/{{ user.avatar }}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                    <img src="/uploads/{{ user.avatar }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
                 {% else %}
-                    <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">
                         {{ user.display_name[0]|upper }}
                     </div>
                 {% endif %}
@@ -20,7 +20,7 @@
                     <div style="font-size: 14px; color: var(--text-muted);">@{{ user.nickname }}</div>
                 </div>
             </div>
-            <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
+            <i class="ph ph-caret-right" style="color: var(--text-muted); font-size: 20px;"></i>
         </a>
         {% endfor %}
     {% else %}
