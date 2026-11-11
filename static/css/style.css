@@ -237,3 +237,188 @@ h1 { font-size: 32px; font-weight: 700; margin-bottom: 24px; }
 .steam-name { font-size: 28px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
 .steam-bio { color: var(--text-muted); font-size: 15px; margin-top: 16px; font-style: italic; }
 .steam-country { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+/* =========================================
+   МОБИЛЬНАЯ ВЕРСИЯ (Адаптив)
+   ========================================= */
+.mobile-nav {
+    display: none; /* На ПК скрыто */
+}
+
+@media (max-width: 768px) {
+    /* Прячем боковое меню на телефоне */
+    .sidebar {
+        display: none;
+    }
+
+    /* Шапка становится меньше */
+    .top-header {
+        height: 60px;
+        padding: 0 16px;
+    }
+    .logo-text-img {
+        height: 40px;
+        margin-left: 0;
+    }
+
+    /* Контент на всю ширину */
+    .layout {
+        flex-direction: column;
+    }
+    .right-side {
+        padding-bottom: 70px; /* Отступ, чтобы нижняя панель не перекрывала контент */
+    }
+    .content {
+        padding: 16px;
+    }
+
+    /* Карточки на главной по 2 в ряд */
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .card {
+        padding: 12px;
+    }
+    .card-icon {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+    .card-title {
+        font-size: 14px;
+    }
+    .card-desc {
+        font-size: 11px;
+    }
+
+    /* Показываем нижнюю панель */
+    .mobile-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: var(--card-bg);
+        border-top: 1px solid var(--border);
+        z-index: 1000;
+    }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 10px;
+        gap: 4px;
+        width: 100%;
+        height: 100%;
+    }
+
+    .mobile-nav-item i {
+        font-size: 24px;
+    }
+
+    .mobile-nav-item:hover, .mobile-nav-item.active {
+        color: var(--accent);
+    }
+
+    /* Профиль (Стим-стайл) на телефоне */
+    .steam-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: -40px;
+    }
+    .steam-avatar-container {
+        margin-top: -60px;
+    }
+    .steam-avatar {
+        width: 120px;
+        height: 120px;
+    }
+    .steam-name {
+        justify-content: center;
+        flex-direction: column;
+        font-size: 22px;
+    }
+    .steam-name .btn-primary {
+        width: 100%;
+        justify-content: center;
+        margin-top: 12px;
+    }
+    .steam-country {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Чат на телефоне */
+    #chat-messages {
+        padding: 16px;
+    }
+    
+    /* Формы (Покупки, Заметки и т.д.) */
+    .add-form {
+        flex-direction: column;
+    }
+    .add-form input, .add-form select, .add-form button {
+        width: 100%;
+    }
+
+    /* Календарь на телефоне */
+    .calendar-grid {
+        font-size: 10px;
+    }
+    .day {
+        min-height: 60px;
+        padding: 2px;
+    }
+}
+
+/* =========================================
+   ЧАТ (Окно переписки)
+   ========================================= */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 150px);
+    max-width: 800px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(0,0,0,0.2);
+}
+
+.chat-body {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+    .chat-container {
+        height: calc(100vh - 130px); /* Учитываем нижнюю панель */
+        border-radius: 0;
+    }
+}
