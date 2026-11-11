@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1><i class="ph ph-chat-teardrop" style="color: var(--accent);"></i> Чаты</h1>
+
+<div style="max-width: 800px;">
+    {% if partners %}
+        {% for user in partners %}
+        <a href="/chat/{{ user.nickname }}" class="list-card" style="text-decoration: none;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                {% if user.avatar %}
+                    <img src="/uploads/{{ user.avatar }}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                    <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">
+                        {{ user.display_name[0]|upper }}
+                    </div>
+                {% endif %}
+                <div>
+                    <div style="font-weight: 600; font-size: 16px; color: var(--text);">{{ user.display_name }}</div>
+                    <div style="font-size: 14px; color: var(--text-muted);">@{{ user.nickname }}</div>
+                </div>
+            </div>
+            <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
+        </a>
+        {% endfor %}
+    {% else %}
+        <div style="background: var(--card-bg); padding: 32px; border-radius: var(--radius); text-align: center;">
+            <p style="color: var(--text-muted); margin-bottom: 16px;">У тебя пока нет активных диалогов.</p>
+            <a href="/friends" class="btn-primary">Перейти в друзья</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
