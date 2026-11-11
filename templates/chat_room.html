@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Подключаем Socket.IO -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+<div style="display: flex; flex-direction: column; height: calc(100vh - 150px); max-width: 800px; background: var(--card-bg); border-radius: var(--radius); overflow: hidden;">
+    
+    <!-- Шапка чата -->
+    <div style="padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.2);">
+        <a href="/chat" style="color: var(--text-muted); text-decoration: none;"><i class="ph ph-arrow-left" style="font-size: 24px;"></i></a>
+        <div style="font-weight: 600; font-size: 18px;">{{ partner.display_name }}</div>
+    </div>
+
+    <!-- Окно сообщений -->
+    <div id="chat-messages" style="flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+        {% for msg in messages %}
+            {% if msg.sender_id == current_user.id %}
+                <div style="align-self: flex-end; max-width: 70%;">
+                    <div style="background: var(--accent); color: white; padding: 10px 16px; border-radius: 12px 12px 0 12px; font-size: 15px;">{{ msg.text }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted); text-align: right; margin-top: 4px;">{{ msg.created_at.strftime('%H:%M') }}</div>
+                </div>
+            {% else %}
+                <div style="align-self: flex-start; max-width: 70%;">
+                    <div style="background: #333; color: white; padding: 10px 16px; border-radius: 12px 12px 12px 0; font-size: 15px;">{{ msg.text }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">{{ msg.created_at.strftime('%H:%M') }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Поле ввода -->
+    <div style="padding: 16px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2);">
+        <form id="chat-form" style="display: flex; gap: 12px;">
+            <input type="text" id="message-input" placeholder="Написать сообщение..." required style="flex: 1; padding: 12px 16px; border-radius: 20px; background: var(--bg); border: 1px solid var(--border); color: white; outline: none;">
+            <button type="submit" class="btn-primary" style="border-radius: 50%; width: 44px; height: 44px; padding: 0; justify-content: center;"><i class="ph ph-paper-plane-right" style="font-size: 20px;"></i></button>
+        </form>
+    </div>
+</div>
+
+<script>
+    var socket = io();
+    var currentUser = "{{ current_user.nickname }}";
+    var partnerNickname = "{{ partner.nickname }}";
+    var chatBox = document.getElementById('chat-messages');
+
+    // Прокрутка вниз при загрузке
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    document.getElementById('chat-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var input = document.getElementById('message-input');
+        if (input.value.trim() !== '') {
+            socket.emit('send_message', {
+                receiver: partnerNickname,
+                text: input.value
+            });
+            input.value = '';
+        }
+    });
+
+    socket.on('receive_message', function(data) {
+        // Показываем сообщение, только если оно относится к этому чату
+        if ((data.sender === partnerNickname && data.receiver === currentUser) || 
+            (data.sender === currentUser && data.receiver === partnerNickname)) {
+            
+            var msgDiv = document.createElement('div');
+            var isMine = data.sender === currentUser;
+            
+            msgDiv.style.alignSelf = isMine ? 'flex-end' : 'flex-start';
+            msgDiv.style.maxWidth = '70%';
+            msgDiv.innerHTML = `
+                <div style="background: ${isMine ? 'var(--accent)' : '#333'}; color: white; padding: 10px 16px; border-radius: 12px ${isMine ? '12px 0 12px' : '12px 12px 0'}; font-size: 15px;">${data.text}</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-align: ${isMine ? 'right' : 'left'}; margin-top: 4px;">${data.time}</div>
+            `;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    });
+</script>
+{% endblock %}
