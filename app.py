@@ -38,12 +38,31 @@ login_manager.login_view = 'login'
 
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
+# --- Словарь флагов ---
+COUNTRY_FLAGS = {
+    'россия': '🇷🇺', 'russia': '🇷🇺',
+    'япония': '🇯🇵', 'japan': '🇯🇵',
+    'сша': '🇺🇸', 'usa': '🇺🇸', 'соединенные штаты': '🇺🇸',
+    'казахстан': '🇰🇿', 'kazakhstan': '🇰🇿',
+    'украина': '🇺🇦', 'ukraine': '🇺🇦',
+    'беларусь': '🇧🇾', 'belarus': '🇧🇾',
+    'германия': '🇩🇪', 'germany': '🇩🇪',
+    'франция': '🇫🇷', 'france': '🇫🇷',
+    'великобритания': '🇬🇧', 'uk': '🇬🇧', 'англия': '🇬🇧',
+    'китай': '🇨🇳', 'china': '🇨🇳',
+    'корея': '🇰🇷', 'korea': '🇰🇷',
+    'италия': '🇮🇹', 'italy': '🇮🇹',
+    'испания': '🇪🇸', 'spain': '🇪🇸',
+    'канада': '🇨🇦', 'canada': '🇨🇦',
+    'турция': '🇹🇷', 'turkey': '🇹🇷',
+}
+
 # --- Модели ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False) # Почта
+    username = db.Column(db.String(50), unique=True, nullable=False)
     display_name = db.Column(db.String(50), nullable=False)
-    nickname = db.Column(db.String(50), unique=True, nullable=True)  # Ник
+    nickname = db.Column(db.String(50), unique=True, nullable=True)
     password_hash = db.Column(db.String(200), nullable=False)
     avatar = db.Column(db.String(200), nullable=True)
     bio = db.Column(db.Text, default='')
@@ -166,7 +185,6 @@ class Message(db.Model):
     sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
     receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_messages')
 
-# НОВЫЕ МОДЕЛИ ДЛЯ ПРОФИЛЯ
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -203,10 +221,10 @@ with app.app_context():
 def login():
     if current_user.is_authenticated: return redirect(url_for('index'))
     if request.method == 'POST':
-        login_input = request.form.get('username') # Тут может быть и почта, и ник
+        login_input = request.form.get('username')
         password = request.form.get('password')
         
-        # Ищем либо по username (почте), либо по nickname (нику)
+        # Ищем либо по почте, либо по нику
         user = User.query.filter((User.username == login_input) | (User.nickname == login_input)).first()
         
         if user and check_password_hash(user.password_hash, password):
@@ -240,14 +258,14 @@ def logout():
 @login_required
 def profile():
     posts = Post.query.filter_by(user_id=current_user.id).order_by(Post.created_at.desc()).all()
-    return render_template('profile.html', user=current_user, posts=posts)
+    return render_template('profile.html', user=current_user, posts=posts, flags=COUNTRY_FLAGS)
 
 @app.route('/profile/<nickname>')
 @login_required
 def user_profile(nickname):
     user = User.query.filter_by(nickname=nickname).first_or_404()
     posts = Post.query.filter_by(user_id=user.id).order_by(Post.created_at.desc()).all()
-    return render_template('user_profile.html', user=user, posts=posts)
+    return render_template('user_profile.html', user=user, posts=posts, flags=COUNTRY_FLAGS)
 
 @app.route('/profile/settings')
 @login_required
@@ -314,9 +332,7 @@ def like_post(post_id):
 @login_required
 def index(): return render_template('index.html')
 
-# --- ОСТАЛЬНЫЕ РАЗДЕЛЫ (Покупки, Желания, Календарь, Заметки, Подписки, Библиотека) ---
-# (Они остались без изменений, я их не трогал, чтобы не сломать)
-
+# --- ОСТАЛЬНЫЕ РАЗДЕЛЫ ---
 @app.route('/shopping')
 @login_required
 def shopping(): return render_template('shopping.html', lists=ShoppingList.query.filter_by(user_id=current_user.id).order_by(ShoppingList.created_at.desc()).all())
