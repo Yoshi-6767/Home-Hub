@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabibito</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
     </header>
 
     <div class="layout">
-        <!-- Сайдбар -->
+        <!-- Обычный сайдбар (для ПК) -->
         <aside class="sidebar">
             <div class="profile-block" onclick="window.location.href='/profile'">
                 {% if current_user.avatar %}
@@ -50,7 +50,6 @@
             </div>
         </aside>
 
-        <!-- Правая часть (Контент + Футер) -->
         <div class="right-side">
             <main class="content">
                 {% block content %}{% endblock %}
@@ -60,5 +59,15 @@
             </footer>
         </div>
     </div>
+
+    <!-- НИЖНЯЯ ПАНЕЛЬ ДЛЯ ТЕЛЕФОНОВ (Скрыта на ПК) -->
+    <nav class="mobile-nav">
+        <a href="/" class="mobile-nav-item"><i class="ph ph-house"></i><span>Главная</span></a>
+        <a href="/friends" class="mobile-nav-item"><i class="ph ph-users"></i><span>Друзья</span></a>
+        <a href="/chat" class="mobile-nav-item"><i class="ph ph-chat-teardrop"></i><span>Чат</span></a>
+        <a href="/library" class="mobile-nav-item"><i class="ph ph-books"></i><span>Библиотека</span></a>
+        <a href="/profile" class="mobile-nav-item"><i class="ph ph-user"></i><span>Профиль</span></a>
+    </nav>
+
 </body>
 </html>
