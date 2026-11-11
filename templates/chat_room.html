@@ -1,24 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Подключаем Socket.IO -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 
-<div style="display: flex; flex-direction: column; height: calc(100vh - 150px); max-width: 800px; background: var(--card-bg); border-radius: var(--radius); overflow: hidden;">
-    
-    <!-- Шапка чата -->
-    <div style="padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.2);">
+<div class="chat-container">
+    <!-- Шапка чата с аватаркой -->
+    <div class="chat-header">
         <a href="/chat" style="color: var(--text-muted); text-decoration: none;"><i class="ph ph-arrow-left" style="font-size: 24px;"></i></a>
-        <div style="font-weight: 600; font-size: 18px;">{{ partner.display_name }}</div>
+        
+        <a href="/profile/{{ partner.nickname }}" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
+            {% if partner.avatar %}
+                <img src="/uploads/{{ partner.avatar }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+            {% else %}
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    {{ partner.display_name[0]|upper }}
+                </div>
+            {% endif %}
+            <div style="font-weight: 600; font-size: 18px;">{{ partner.display_name }}</div>
+        </a>
     </div>
 
     <!-- Окно сообщений -->
-    <div id="chat-messages" style="flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+    <div id="chat-messages" class="chat-body">
         {% for msg in messages %}
             {% if msg.sender_id == current_user.id %}
                 <div style="align-self: flex-end; max-width: 70%;">
                     <div style="background: var(--accent); color: white; padding: 10px 16px; border-radius: 12px 12px 0 12px; font-size: 15px;">{{ msg.text }}</div>
-                    <div style="font-size: 11px; color: var(--text-muted); text-align: right; margin-top: 4px;">{{ msg.created_at.strftime('%H:%M') }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted); text-align: right; margin-top: 4px; display: flex; justify-content: flex-end; align-items: center; gap: 4px;">
+                        {{ msg.created_at.strftime('%H:%M') }}
+                        <!-- Галочки -->
+                        {% if msg.is_read %}
+                            <i class="ph ph-checks" style="color: #4CAF50; font-size: 14px;"></i>
+                        {% else %}
+                            <i class="ph ph-check" style="color: var(--text-muted); font-size: 14px;"></i>
+                        {% endif %}
+                    </div>
                 </div>
             {% else %}
                 <div style="align-self: flex-start; max-width: 70%;">
@@ -30,7 +46,7 @@
     </div>
 
     <!-- Поле ввода -->
-    <div style="padding: 16px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2);">
+    <div class="chat-footer">
         <form id="chat-form" style="display: flex; gap: 12px;">
             <input type="text" id="message-input" placeholder="Написать сообщение..." required style="flex: 1; padding: 12px 16px; border-radius: 20px; background: var(--bg); border: 1px solid var(--border); color: white; outline: none;">
             <button type="submit" class="btn-primary" style="border-radius: 50%; width: 44px; height: 44px; padding: 0; justify-content: center;"><i class="ph ph-paper-plane-right" style="font-size: 20px;"></i></button>
@@ -44,7 +60,6 @@
     var partnerNickname = "{{ partner.nickname }}";
     var chatBox = document.getElementById('chat-messages');
 
-    // Прокрутка вниз при загрузке
     chatBox.scrollTop = chatBox.scrollHeight;
 
     document.getElementById('chat-form').addEventListener('submit', function(e) {
@@ -60,7 +75,6 @@
     });
 
     socket.on('receive_message', function(data) {
-        // Показываем сообщение, только если оно относится к этому чату
         if ((data.sender === partnerNickname && data.receiver === currentUser) || 
             (data.sender === currentUser && data.receiver === partnerNickname)) {
             
@@ -71,7 +85,10 @@
             msgDiv.style.maxWidth = '70%';
             msgDiv.innerHTML = `
                 <div style="background: ${isMine ? 'var(--accent)' : '#333'}; color: white; padding: 10px 16px; border-radius: 12px ${isMine ? '12px 0 12px' : '12px 12px 0'}; font-size: 15px;">${data.text}</div>
-                <div style="font-size: 11px; color: var(--text-muted); text-align: ${isMine ? 'right' : 'left'}; margin-top: 4px;">${data.time}</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-align: ${isMine ? 'right' : 'left'}; margin-top: 4px; display: flex; justify-content: ${isMine ? 'flex-end' : 'flex-start'}; align-items: center; gap: 4px;">
+                    ${data.time}
+                    ${isMine ? '<i class="ph ph-check" style="color: var(--text-muted); font-size: 14px;"></i>' : ''}
+                </div>
             `;
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
