@@ -27,8 +27,25 @@
         </div>
         
         <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Страна</label>
-            <input type="text" name="country" value="{{ current_user.country }}" placeholder="Например: Россия, Япония" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Страна (для флага)</label>
+            <select name="country" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px;">
+                <option value="" {% if not current_user.country %}selected{% endif %}>Не указывать</option>
+                <option value="Россия" {% if current_user.country == 'Россия' %}selected{% endif %}>🇷🇺 Россия</option>
+                <option value="Япония" {% if current_user.country == 'Япония' %}selected{% endif %}>🇯🇵 Япония</option>
+                <option value="США" {% if current_user.country == 'США' %}selected{% endif %}>🇺🇸 США</option>
+                <option value="Казахстан" {% if current_user.country == 'Казахстан' %}selected{% endif %}>🇰🇿 Казахстан</option>
+                <option value="Беларусь" {% if current_user.country == 'Беларусь' %}selected{% endif %}>🇧🇾 Беларусь</option>
+                <option value="Украина" {% if current_user.country == 'Украина' %}selected{% endif %}>🇺🇦 Украина</option>
+                <option value="Германия" {% if current_user.country == 'Германия' %}selected{% endif %}>🇩🇪 Германия</option>
+                <option value="Франция" {% if current_user.country == 'Франция' %}selected{% endif %}>🇫🇷 Франция</option>
+                <option value="Великобритания" {% if current_user.country == 'Великобритания' %}selected{% endif %}>🇬🇧 Великобритания</option>
+                <option value="Китай" {% if current_user.country == 'Китай' %}selected{% endif %}>🇨🇳 Китай</option>
+                <option value="Корея" {% if current_user.country == 'Корея' %}selected{% endif %}>🇰🇷 Корея</option>
+                <option value="Италия" {% if current_user.country == 'Италия' %}selected{% endif %}>🇮🇹 Италия</option>
+                <option value="Испания" {% if current_user.country == 'Испания' %}selected{% endif %}>🇪🇸 Испания</option>
+                <option value="Канада" {% if current_user.country == 'Канада' %}selected{% endif %}>🇨🇦 Канада</option>
+                <option value="Турция" {% if current_user.country == 'Турция' %}selected{% endif %}>🇹🇷 Турция</option>
+            </select>
         </div>
 
         <div style="margin-bottom: 24px;">
