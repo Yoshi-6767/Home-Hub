@@ -146,6 +146,10 @@ class FriendRequest(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     status = db.Column(db.String(20), default='pending') # pending, accepted
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Вот эти две строчки починят 500-ю ошибку!
+    sender = db.relationship('User', foreign_keys=[sender_id])
+    receiver = db.relationship('User', foreign_keys=[receiver_id])
 
 class BlockedUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -710,6 +714,70 @@ def friends_unblock(user_id):
         db.session.commit()
     return redirect(url_for('friends'))
 
+
+# --- ЧАТ ---
+@app.route('/chat')
+@login_required
+def chat_list():
+    # Находим всех, с кем мы переписывались (отправляли или получали)
+    messages = Message.query.filter((Message.sender_id == current_user.id) | (Message.receiver_id == current_user.id)).order_by(Message.created_at.desc()).all()
+    
+    # Собираем уникальных собеседников
+    chat_partners = {}
+    for msg in messages:
+        partner = msg.receiver if msg.sender_id == current_user.id else msg.sender
+        if partner.id not in chat_partners:
+            chat_partners[partner.id] = partner
+            
+    return render_template('chat_list.html', partners=list(chat_partners.values()))
+
+@app.route('/chat/<nickname>')
+@login_required
+def chat_room(nickname):
+    partner = User.query.filter_by(nickname=nickname).first_or_404()
+    if partner.id == current_user.id:
+        flash('Нельзя писать самому себе', 'error')
+        return redirect(url_for('chat_list'))
+        
+    # Получаем историю переписки
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user.id) & (Message.receiver_id == partner.id)) |
+        ((Message.sender_id == partner.id) & (Message.receiver_id == current_user.id))
+    ).order_by(Message.created_at.asc()).all()
+
+    # Помечаем сообщения собеседника как прочитанные
+    for m in messages:
+        if m.receiver_id == current_user.id and not m.is_read:
+            m.is_read = True
+    db.session.commit()
+
+    return render_template('chat_room.html', partner=partner, messages=messages)
+
+# Обработчик WebSocket для мгновенной отправки
+@socketio.on('send_message')
+def handle_send_message(data):
+    if not current_user.is_authenticated:
+        return
+    
+    receiver = User.query.filter_by(nickname=data['receiver']).first()
+    if not receiver:
+        return
+
+    new_msg = Message(
+        sender_id=current_user.id,
+        receiver_id=receiver.id,
+        text=data['text']
+    )
+    db.session.add(new_msg)
+    db.session.commit()
+
+    # Отправляем сообщение собеседнику в реальном времени
+    emit('receive_message', {
+        'sender': current_user.nickname,
+        'receiver': receiver.nickname,
+        'text': data['text'],
+        'time': new_msg.created_at.strftime('%H:%M')
+    }, broadcast=True)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
